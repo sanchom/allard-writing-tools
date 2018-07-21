@@ -1,0 +1,62 @@
+---
+references:
+- id: haack-defending-science
+  type: book
+  author:
+  - family: Haack
+    given: Susan
+  original-date:
+  - year: 2003
+  title: 'Defending science-within reason: Between scientism and cynicism'
+  publisher: Prometheus Books
+  publisher-place: New York
+
+- id: hayes
+  type: legal_case
+  title: 'Hayes v British Columbia Television Broadcasting System Ltd'
+  title-short: Hayes
+  issued:
+  - year: 1992
+  authority: '74 BCLR (2d) 120 (CA)'
+
+- id: sproule
+  type: legal_case
+  title: 'Sproule v McConnell'
+  title-short: Sproule
+  authority: '[1925] 1 DLR 982 (Sask CA)'
+
+- id: hughes
+  type: legal_case
+  title: 'Hughes v Page'
+  title-short: Hughes
+  authority: '1998 CarswellBC 216 (WL Can) (SC)'
+
+- id: jenks
+  type: legal_case
+  title: 'Jenks v McCrory'
+  title-short: 'Jenks'
+  authority: '[1998] BCJ no 995 (QL) (SC)'
+
+- id: hill
+  type: legal_case
+  title: 'Hill v Church of Scientology of Toronto'
+  title-short: 'Hill'
+  authority: '[1995] 2 SCR 1130'
+  source: '184 NR 1'
+  author:
+  - family: 'Cory J'
+
+- id: robitaille
+  type: legal_case
+  title: Robitaille v Vancouver Hockey Club
+  title-short: Robitaille
+  authority: '[1981] 3 WWR 481'
+  source: '124 DLR (3d) 228 (BCCA)'
+
+- id: whiten
+  type: legal_case
+  title: Whiten v Pilot Insurance
+  title-short: Whiten
+  authority: '2002 SCC 18'
+  source: '[2002] SCR 295'
+...

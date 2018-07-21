@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0">
+  <!--
+      I wrote this CSL file for use in conjunction with my custom
+      pre-processor and Pandoc to cite factums in the style required
+      by UBC's Allard School of Law. That style uses inline short
+      labels, along with per-paragraph notes. That can't be handled
+      with Pandoc and CSL alone. I use CSL to generate the layout of a
+      citation, but my custom pre-processor puts that content into the
+      appropriate place for Pandoc.
+
+      I've borrowed some techniques and macros from mcgill-en.csl by
+      Liam McHugh-Russel, Florian Martin-Bariteau, and Frank Bennett.
+      
+      For legal cases, 'authority' will be the first-listed citation,
+      and the citation to which pinpoints will attach. 'source' is a
+      parallel citation. 'author' (family name) can be used to
+      indicate a particular judge/justice, which is listed after all
+      other elements. Specify an issued-year only if the first-listed
+      citation ('authority') doesn't include the year as its first
+      element or if the year in the first-listed authority doesn't
+      match the release date of the decision. In those cases, the year
+      will be inserted directly following the case name. There is no
+      automatic shortening of case names. You need to specify the
+      short-title manually in the bibliography.
+  -->
+  <info>
+    <id>https://github.com/sanchom/allard-writing-tools/blob/master/allard-factum.csl</id>
+    <title>Allard Law Citation Style</title>
+    <link href="http://guides.library.ubc.ca/legalcitation/home" rel="documentation"/>
+    <link href="http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/first%20year/factum_citation_guide.pdf" rel="documentation"/>
+    <author>
+      <name>Sancho McCann</name>
+      <email>sanchom@gmail.com</email>
+    </author>
+    <category field="law"/>
+    <updated>2018-07-21T12:16:31-07:00</updated>
+  </info>
+  <locale xml:lang="en">
+  </locale>
+  <macro name="author">
+    <names variable="author"/>
+  </macro>
+  <macro name="title">
+    <text variable="title" font-style="italic"/>
+  </macro>
+  <macro name="publisher info">
+    <text value="(" />
+    <choose>
+      <if variable="publisher-place">
+	<group delimiter=": ">
+	  <text variable="publisher-place"/>
+	  <text variable="publisher"/>
+	</group>
+      </if>
+      <else>
+	<text variable="publisher"/>
+      </else>
+    </choose>
+    <text value=", "/>
+    <date variable="original-date">
+      <date-part name="year"/>
+    </date>
+    <text value=")"/>
+  </macro>
+  <macro name="pinpoint">
+    <group delimiter=" ">
+      <choose>
+        <if locator="page" match="any">
+          <choose>
+            <if variable="locator">
+              <text term="at" prefix=" "/>
+            </if>
+          </choose>
+        </if>
+        <else>
+	  <text term="at" prefix=" "/>
+          <label variable="locator" plural="contextual" form="short" strip-periods="true" prefix=" "/>
+        </else>
+      </choose>
+      <text variable="locator"/>
+    </group>
+  </macro>
+  <citation et-al-min="3" et-al-use-first="1">
+    <layout delimiter="; ">
+      <choose>
+	<if position="ibid subsequent" match="any">
+	  <group delimiter=" ">
+	    <text variable="title-short" font-style="italic"/>
+	    <text macro="pinpoint"/>
+	  </group>
+	</if>
+	<else>
+	  <choose>
+	    <if type="legal_case">
+	      <group delimiter=" ">
+		<group delimiter=" " suffix=",">
+		  <text macro="title"/>
+		  <group prefix="(" suffix=")">
+		    <date variable="issued">
+		      <date-part name="year"/>
+		    </date>
+		  </group>
+		</group>
+		<group delimiter=" " suffix=" ">
+		  <text variable="authority"/>
+		  <text macro="pinpoint"/>
+		  <text variable="source" prefix=", "/>
+		  <text variable="author" prefix=", "/>
+		</group>
+		<group prefix="[" suffix="]">
+		  <text variable="title-short" font-style="italic"/>
+		</group>
+	      </group>
+	    </if>
+	    <else>
+	      <group delimiter=", " suffix=" ">
+		<text macro="author"/>
+		<text macro="title"/>
+	      </group>
+	      <text macro="publisher info"/>
+	    </else>
+	  </choose>
+	</else>
+      </choose>
+    </layout>
+  </citation>
+</style>

@@ -129,6 +129,7 @@
 		<text macro="title"/>
 	      </group>
 	      <text macro="publisher info"/>
+	      <text macro="pinpoint" prefix=" "/>
 	    </else>
 	  </choose>
 	</else>

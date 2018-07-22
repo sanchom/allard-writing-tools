@@ -8,11 +8,18 @@ import sys
 usage = 'Usage: ./paranotes-filter.py input.md bibliography.yaml style.csl'
 
 pinpoint_terms = {'para': {'singular':'para.',
-                           'plural':'paras.'}}
+                           'plural':'paras.'},
+                  'page': {'singular':'p.',
+                           'plural':'pp.'}}
+
+def is_range(pinpoint_value):
+  return pinpoint_value.count('-')
 
 def detect_pinpoint_type(pinpoint):
   if pinpoint.count('para'):
     return 'para'
+  if pinpoint.count('p.'):
+    return 'page'
   else:
     raise NotImplementedError('Pinpoint type not handled: {}'.format(pinpoint))
 
@@ -20,7 +27,7 @@ def extract_pinpoint_value(pinpoint):
   pinpoint_type = detect_pinpoint_type(pinpoint)
   terms_to_strip = pinpoint_terms[pinpoint_type]
   pinpoint_value = pinpoint
-  for term in terms_to_strip.values():
+  for term in sorted(terms_to_strip.values(), key=lambda s: len(s), reverse=True):
     pinpoint_value = pinpoint_value.replace(term, '', 1).strip()
   return pinpoint_value
 
@@ -43,9 +50,7 @@ def print_paragraph_notes(para_notes, citation_db):
     else:
       sys.stdout.write('[{}'.format(key))
     for pinpoint_type, pinpoint_list in content['pinpoints'].items():
-      # Need to test for range in solo pinpoint. Those should also
-      # take a plural term.
-      plural = (len(pinpoint_list) > 1)
+      plural = (len(pinpoint_list) > 1 or is_range(pinpoint_list[0]))
       if 'supra' in content:
         # No period for pinpoint signal in supra context.
         sys.stdout.write(' at {} '.format(get_term(pinpoint_type, plural, False)))

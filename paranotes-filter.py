@@ -34,34 +34,35 @@ def get_term(pinpoint_type, plural, include_dot):
     raise NotImplementedError('Cannot get term for pinpoint type: {}'.format(pinpoint_type))
 
 def print_paragraph_notes(para_notes, citation_db):
+  if para_notes.items():
+    sys.stdout.write('\n')
   for key, content in para_notes.items():
     sys.stdout.write('    ')
     if 'supra' in content:
-      sys.stdout.write('{}, _supra_ para {} '.format(citation_db[key]['short_form'], citation_db[key]['original_paragraph']))
+      sys.stdout.write('{}, _supra_ para {}'.format(citation_db[key]['short_form'], citation_db[key]['original_paragraph']))
     else:
-      sys.stdout.write('[{} '.format(key))
+      sys.stdout.write('[{}'.format(key))
     for pinpoint_type, pinpoint_list in content['pinpoints'].items():
       # Need to test for range in solo pinpoint. Those should also
       # take a plural term.
       plural = (len(pinpoint_list) > 1)
       if 'supra' in content:
-        # No period in supra context.
-        sys.stdout.write('at {} '.format(get_term(pinpoint_type, plural, False)))
+        # No period for pinpoint signal in supra context.
+        sys.stdout.write(' at {} '.format(get_term(pinpoint_type, plural, False)))
         for pinpoint in pinpoint_list[:-1]:
           sys.stdout.write('{}, '.format(pinpoint))
         sys.stdout.write('{}'.format(pinpoint_list[-1]))
       else:
-        # Period needed here for Pandoc to render the full note with
-        # proper pinpointing.
-        sys.stdout.write('{} '.format(get_term(pinpoint_type, plural, True)))
+        # Period needed in the pinpoint signal here for Pandoc to
+        # render the full note with proper pinpointing.
+        sys.stdout.write(' {} '.format(get_term(pinpoint_type, plural, True)))
         for pinpoint in pinpoint_list[:-1]:
           sys.stdout.write('{}, '.format(pinpoint))
         sys.stdout.write('{}'.format(pinpoint_list[-1]))
     if not 'supra' in content:
-      sys.stdout.write(']\n')
-    else:
-      sys.stdout.write('\n')
-    sys.stdout.write('\n')
+      sys.stdout.write(']')
+    sys.stdout.write('.')
+    sys.stdout.write('\n\n')
 
 def run_filter(input_path, bibliography_path, csl_path):
   citation_db = {}

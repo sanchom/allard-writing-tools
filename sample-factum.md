@@ -32,4 +32,6 @@ pinpoint [@hill, para. 20]. Here's the final pinpoint [@hill,
 para. 80].
 
 ## Another subheading
-¶ Typeface is Charter.
+¶ I should also be able to cite books [@haack-defending-science]. Paragraph notes must
+appear in the order that their citations appeared inline in the
+paragraph. [@whiten] [@robitaille] [@hill]

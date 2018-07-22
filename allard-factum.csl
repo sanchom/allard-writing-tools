@@ -85,10 +85,20 @@
     <layout delimiter="; ">
       <choose>
 	<if position="ibid subsequent" match="any">
-	  <group delimiter=" ">
-	    <text variable="title-short" font-style="italic"/>
-	    <text macro="pinpoint"/>
-	  </group>
+	  <choose>
+	    <if type="legal_case">
+	      <group delimiter=" ">
+		<text variable="title-short" font-style="italic"/>
+		<text macro="pinpoint"/>
+	      </group>
+	    </if>
+	    <else>
+	      <group delimiter=" ">
+		<text variable="author" form="short" font-style="italic"/>
+		<text macro="pinpoint"/>
+	      </group>
+	    </else>
+	  </choose>
 	</if>
 	<else>
 	  <choose>

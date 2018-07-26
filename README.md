@@ -37,7 +37,7 @@ place for Pandoc. (This should really be done by a transformation
 langauge that has a proper parser, tokenizer, etc.)
 
 When writing markdown for this style, you need to use paragraph
-markings (¶). This is the only way the pre-processor can know where to
+markings (¶, or ◊). This is the only way the pre-processor can know where to
 insert the per-paragraph notes. "Paragraphs" don't necessarily end
 when there's a double linebreak. You may be making a quotation or some
 text from a statute, but that isn't the end of the "paragraph" for the

@@ -11,18 +11,24 @@
 
       I've borrowed some techniques and macros from mcgill-en.csl by
       Liam McHugh-Russel, Florian Martin-Bariteau, and Frank Bennett.
-      
+
+      The CSL specification doesn't have the necessary elements for
+      legal case citations required by Allard (McGill / Canadian
+      Uniform Guide). So, I (ab)use the existing fields to get what we
+      need.
+
       For legal cases, 'authority' will be the first-listed citation,
       and the citation to which pinpoints will attach. 'source' is a
-      parallel citation. 'author' (family name) can be used to
-      indicate a particular judge/justice, which is listed after all
-      other elements. Specify an issued-year only if the first-listed
-      citation ('authority') doesn't include the year as its first
-      element or if the year in the first-listed authority doesn't
-      match the release date of the decision. In those cases, the year
-      will be inserted directly following the case name. There is no
-      automatic shortening of case names. You need to specify the
-      short-title manually in the bibliography.
+      parallel citation and everything else that might come after any
+      pinpoint except for 'author' (family name) which can be used to
+      indicate a particular judge/justice concurring or in dissent,
+      etc., listed after all other elements. Specify an issued-year
+      only if the first-listed citation ('authority') doesn't include
+      the year as its first element or if the year in the first-listed
+      authority doesn't match the release date of the decision. In
+      those cases, the year will be inserted directly following the
+      case name. There is no automatic shortening of case names. You
+      need to specify the short-title manually in the bibliography.
   -->
   <info>
     <id>https://github.com/sanchom/allard-writing-tools/blob/master/allard-factum.csl</id>
@@ -81,6 +87,27 @@
       <text variable="locator"/>
     </group>
   </macro>
+  <macro name="render-case">
+    <group delimiter=" ">
+      <group delimiter=" " suffix=",">
+	<text macro="title"/>
+	<group prefix="(" suffix=")">
+	  <date variable="issued">
+	    <date-part name="year"/>
+	  </date>
+	</group>
+      </group>
+      <group delimiter=" " suffix=" ">
+	<text variable="authority"/>
+	<text macro="pinpoint"/>
+	<text variable="source" prefix=", "/>
+	<text variable="author" prefix=", "/>
+      </group>
+      <group prefix="[" suffix="]">
+	<text variable="title-short" font-style="italic"/>
+      </group>
+    </group>
+  </macro>
   <citation et-al-min="3" et-al-use-first="1">
     <layout delimiter="; ">
       <choose>
@@ -93,6 +120,7 @@
 	      </group>
 	    </if>
 	    <else>
+	      <!-- Everything other than a legal case -->
 	      <group delimiter=" ">
 		<text variable="author" form="short" font-style="italic"/>
 		<text macro="pinpoint"/>
@@ -103,34 +131,19 @@
 	<else>
 	  <choose>
 	    <if type="legal_case">
-	      <group delimiter=" ">
-		<group delimiter=" " suffix=",">
-		  <text macro="title"/>
-		  <group prefix="(" suffix=")">
-		    <date variable="issued">
-		      <date-part name="year"/>
-		    </date>
-		  </group>
-		</group>
-		<group delimiter=" " suffix=" ">
-		  <text variable="authority"/>
-		  <text macro="pinpoint"/>
-		  <text variable="source" prefix=", "/>
-		  <text variable="author" prefix=", "/>
-		</group>
-		<group prefix="[" suffix="]">
-		  <text variable="title-short" font-style="italic"/>
-		</group>
-	      </group>
+	      <text macro="render-case"/>
 	    </if>
-	    <else>
+	    <else-if type="book">
 	      <group delimiter=", " suffix=" ">
 		<text macro="author"/>
 		<text macro="title"/>
 	      </group>
 	      <text macro="publisher info"/>
 	      <text macro="pinpoint" prefix=" "/>
-	    </else>
+	    </else-if>
+	    <else-if type="article">
+	      <text value="--article citation not implemented--"/>
+	    </else-if>
 	  </choose>
 	</else>
       </choose>

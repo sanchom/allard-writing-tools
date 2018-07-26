@@ -16,15 +16,18 @@ or Racket.
 
 Like in the example here: https://guides.library.ubc.ca/legalcitation/intext
 
-`pandoc sample-intext.md --bibliography sample-bibliography.yaml --csl allard-factum.csl -t plain`
+`pandoc sample-intext.md --bibliography sample-bibliography-1.yaml --csl allard-factum.csl -t plain`
 
 or
 
-`pandoc sample-intext.md --bibliography sample-bibliography.yaml --csl allard-factum.csl -o sample-intext.pdf`
+`pandoc sample-intext.md --bibliography sample-bibliography-1.yaml --csl allard-factum.csl -o sample-intext.pdf`
 
 # For factum style
 
-Like here: http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/first%20year/factum_citation_guide.pdf
+These tools try to replicate the formating from the guidance and examples here:
+
+- http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/first%20year/factum_citation_guide.pdf
+- http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/moots/sample_appellants_factum_0.pdf
 
 This is more complicated and can't be handled with Pandoc and CSL
 alone (LaTeX/Bibtex doesn't do this either). So, I need to do some
@@ -41,6 +44,13 @@ text from a statute, but that isn't the end of the "paragraph" for the
 purposes of the factum's structure or for inserting citations.
 
 ```
-  ./paranotes-filter.py sample-factum.md sample-bibliography.yaml allard-factum.csl \
-  | pandoc --bibliography sample-bibliography.yaml --csl allard-factum.csl -o sample-factum.pdf
+  ./paranotes-filter.py sample-factum-1.md sample-bibliography-1.yaml allard-factum.csl \
+  | pandoc --bibliography sample-bibliography-1.yaml --csl allard-factum.csl --template=factum.latex -o sample-factum-1.pdf
+```
+
+Or, with a table-of-contents:
+
+```
+  ./paranotes-filter.py sample-factum-2.md sample-bibliography-2.yaml allard-factum.csl \
+  | pandoc --bibliography sample-bibliography-2.yaml --csl allard-factum.csl --template=factum.latex --toc -o sample-factum-2.pdf
 ```

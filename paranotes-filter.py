@@ -5,6 +5,8 @@ import shlex
 import subprocess
 import sys
 
+paragraph_markers = ['◊', '¶']
+
 usage = 'Usage: ./paranotes-filter.py input.md bibliography.yaml style.csl'
 
 pinpoint_terms = {'para': {'singular':'para.',
@@ -43,8 +45,13 @@ def get_term(pinpoint_type, plural, include_dot):
 def print_paragraph_notes(para_notes, citation_db):
   if para_notes.items():
     sys.stdout.write('\n')
-  for key, content in para_notes.items():
-    sys.stdout.write('    ')
+    sys.stdout.write('\\setlength{\\originalparskip}{\\parskip}\n')
+    sys.stdout.write('\\setstretch{1.15}\n')
+    sys.stdout.write('\\setlength{\\leftskip}{1.5em}\n\n')
+  num_notes = len(para_notes.items())
+  for note_id, (key, content) in enumerate(para_notes.items(), 1):
+    if note_id != 1:
+      sys.stdout.write('\\setlength{\\parskip}{0.5em}\n\n')
     if 'supra' in content:
       sys.stdout.write('{}, _supra_ para {}'.format(citation_db[key]['short_form'], citation_db[key]['original_paragraph']))
     else:
@@ -67,7 +74,16 @@ def print_paragraph_notes(para_notes, citation_db):
     if not 'supra' in content:
       sys.stdout.write(']')
     sys.stdout.write('.')
-    sys.stdout.write('\n\n')
+    if note_id != num_notes:
+      # sys.stdout.write('\n\n\\vspace{-20pt}\n\n')
+      sys.stdout.write('\n\n')
+      pass
+    else:
+      sys.stdout.write('\n\n')
+  if para_notes.items():
+    sys.stdout.write('\n\\setlength{\\leftskip}{0em}\n')
+    sys.stdout.write('\\setstretch{\\mainstretch}\n')
+    sys.stdout.write('\\setlength{\\parskip}{\\originalparskip}\n\n')
 
 def run_filter(input_path, bibliography_path, csl_path):
   citation_db = {}
@@ -85,13 +101,13 @@ def run_filter(input_path, bibliography_path, csl_path):
         explicit_paragraph_note = True
       elif char != ' ' and char != '[' and not in_a_citation:
         explicit_paragraph_note = False
-      if char == '¶' or char == '#':
+      if char in paragraph_markers or char == '#':
         # Whenever we encounter a new paragraph or heading level, dump
         # any paragraph-level notes from the previous paragraph.
         print_paragraph_notes(para_notes, citation_db)
         # Resetting the paragraph notes for the forthcoming paragraph.
         para_notes = {}
-        if char == '¶':
+        if char in paragraph_markers:
           para_number += 1
           sys.stdout.write('{}.'.format(para_number))
         elif char == '#':
@@ -135,8 +151,6 @@ def run_filter(input_path, bibliography_path, csl_path):
           citation_db[citation_key]['short_form'] = short_form
           if not explicit_paragraph_note:
             sys.stdout.write('({})'.format(short_form))
-          else:
-            sys.stdout.write('[{} {}]\n'.format(citation_key, citation_pinpoint))
         else:
           # This citation key has been mentioned before.
           original_paragraph = citation_db[citation_key]['original_paragraph']

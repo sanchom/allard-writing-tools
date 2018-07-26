@@ -1,0 +1,13 @@
+---
+references:
+- id: gauthier-scc
+  type: legal_case
+  title: 'R v Gauthier'
+  title-short: 'Gauthier SCC'
+  authority: '2013 SCC 32'
+- id: gauthier-ca
+  type: legal_case
+  title: 'R v Gauthier'
+  title-short: 'Gauthier CA'
+  authority: '2011 QCCA 1395'
+...

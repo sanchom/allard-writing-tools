@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import functools
 import os
 import shlex
 import subprocess
@@ -46,8 +47,8 @@ def print_paragraph_notes(para_notes, citation_db):
   if para_notes.items():
     sys.stdout.write('\n')
     sys.stdout.write('\\setlength{\\originalparskip}{\\parskip}\n')
-    sys.stdout.write('\\setstretch{1.15}\n')
-    sys.stdout.write('\\setlength{\\leftskip}{1.5em}\n\n')
+    sys.stdout.write('\\setstretch{1.1}\n')
+    sys.stdout.write('\\setlength{\\leftskip}{2.5em}\n\n')
   num_notes = len(para_notes.items())
   for note_id, (key, content) in enumerate(para_notes.items(), 1):
     if note_id != 1:
@@ -84,6 +85,21 @@ def print_paragraph_notes(para_notes, citation_db):
     sys.stdout.write('\n\\setlength{\\leftskip}{0em}\n')
     sys.stdout.write('\\setstretch{\\mainstretch}\n')
     sys.stdout.write('\\setlength{\\parskip}{\\originalparskip}\n\n')
+
+@functools.lru_cache(maxsize=None)
+def get_short_form(citation_key, bibliography_path, csl_path):
+  temp_path = 'temp.md'
+  with open(temp_path, 'w') as temp_file:
+    temp_file.write('[{}]\n\n[{}]\n'.format(citation_key, citation_key))
+  pandoc_command = 'pandoc temp.md --bibliography {} --csl {} -t plain'.format(bibliography_path, csl_path)
+  pandoc_output = subprocess.check_output(shlex.split(pandoc_command)).decode('utf-8')
+  try:
+    os.remove(temp_path)
+  except:
+    pass
+  forms = pandoc_output.splitlines()
+  short_form = forms[-1]
+  return short_form
 
 def run_filter(input_path, bibliography_path, csl_path):
   citation_db = {}
@@ -136,18 +152,7 @@ def run_filter(input_path, bibliography_path, csl_path):
           # before the next paragraph.
           citation_db[citation_key] = {}
           citation_db[citation_key]['original_paragraph'] = para_number
-          # Getting the short form.
-          temp_path = 'temp.md'
-          with open(temp_path, 'w') as temp_file:
-            temp_file.write('[{}]\n\n[{}]\n'.format(citation_key, citation_key))
-          pandoc_command = 'pandoc temp.md --bibliography {} --csl {} -t plain'.format(bibliography_path, csl_path)
-          pandoc_output = subprocess.check_output(shlex.split(pandoc_command)).decode('utf-8')
-          try:
-            os.remove(temp_path)
-          except:
-            pass
-          forms = pandoc_output.splitlines()
-          short_form = forms[-1]
+          short_form = get_short_form(citation_key, bibliography_path, csl_path)
           citation_db[citation_key]['short_form'] = short_form
           if not explicit_paragraph_note:
             sys.stdout.write('({})'.format(short_form))

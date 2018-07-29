@@ -19,7 +19,7 @@ $if(linestretch)$
 \def \mainstretch {$linestretch$}
 $endif$
 \usepackage{enumitem}
-\setlist[enumerate]{leftmargin=1.5pc, wide, labelsep*=1.5em}
+\setlist[enumerate]{wide, labelsep*=1.5em}
 \usepackage{titlesec}
 \usepackage{titletoc}
 \usepackage[normalem]{ulem}

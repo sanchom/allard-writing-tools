@@ -11,6 +11,18 @@ references:
   publisher: Prometheus Books
   publisher-place: New York
 
+- id: marakah
+  type: legal_case
+  title: 'R v Marakah'
+  title-short: 'Marakah'
+  authority: '2017 SCC 59'
+
+- id: jordan
+  type: legal_case
+  title: 'R v Jordan'
+  title-short: 'Jordan'
+  authority: '2016 SCC 27'
+
 - id: hayes
   type: legal_case
   title: 'Hayes v British Columbia Television Broadcasting System Ltd'

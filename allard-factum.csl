@@ -97,14 +97,11 @@
 	  </date>
 	</group>
       </group>
-      <group delimiter=" " suffix=" ">
+      <group delimiter=" ">
 	<text variable="authority"/>
 	<text macro="pinpoint"/>
 	<text variable="source" prefix=", "/>
 	<text variable="author" prefix=", "/>
-      </group>
-      <group prefix="[" suffix="]">
-	<text variable="title-short" font-style="italic"/>
       </group>
     </group>
   </macro>

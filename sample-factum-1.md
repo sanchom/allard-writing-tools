@@ -22,6 +22,20 @@ misconduct of the particular defendant against whom they are awarded.
 
 [@hill, para. 195]
 
+# Single-use citations
+
+## Never used elsewhere
+
+There is no need to report a short-form when a citation is never used
+elsewhere.
+
+[@jordan]
+
+## Use within the text is considered a use elsewhere
+
+But, if the citation is used even inline within the paragraph, [@marakah] the
+short form is necessary in the paragraph note.
+
 # Another heading
 
 ## A subheading

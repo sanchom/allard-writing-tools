@@ -1,6 +1,6 @@
 ---
 fontfamily: charter
-linestretch: 1.15
+linestretch: 2.0
 ...
 
 # A heading

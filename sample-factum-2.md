@@ -3,6 +3,13 @@ numbersections: true
 linestretch: 2
 ...
 
+# Attribution
+
+Except for this section, this document is an attempted reproduction of
+the factum at
+http://www.allard.ubc.ca/first-year-assignment-schedule-moot-info. I'm
+using that content to test my custom authoring system.
+
 # Statement of Facts
 
 ◊ The Appellant, Cathie Gauthier, was convicted after trial by jury of

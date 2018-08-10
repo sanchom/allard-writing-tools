@@ -76,8 +76,8 @@ def print_paragraph_notes(para_notes, citation_db, append_short_form):
         sys.stdout.write('{}'.format(pinpoint_list[-1]))
     if not 'supra' in content:
       sys.stdout.write(']')
-    if key in append_short_form:
-      sys.stdout.write(' [{}]'.format(citation_db[key]['short_form']))
+      if key in append_short_form:
+        sys.stdout.write(' [{}]'.format(citation_db[key]['short_form']))
     sys.stdout.write('.')
     if note_id != num_notes:
       # sys.stdout.write('\n\n\\vspace{-20pt}\n\n')

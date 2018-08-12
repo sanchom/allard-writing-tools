@@ -7,7 +7,7 @@ linestretch: 2
 
 Except for this section, this document is an attempted reproduction of
 the factum at
-http://www.allard.ubc.ca/first-year-assignment-schedule-moot-info. I'm
+<http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/moots/sample_appellants_factum_0.pdf>. I'm
 using that content to test my custom authoring system.
 
 # Statement of Facts

@@ -26,19 +26,20 @@ misconduct of the particular defendant against whom they are awarded.
 
 ## Never used elsewhere
 
-There is no need to report a short-form when a citation is never used
+¶ There is no need to report a short-form when a citation is never used
 elsewhere.
 
 [@jordan]
 
 ## Use within the text is considered a use elsewhere
 
-But, if the citation is used even inline within the paragraph, [@marakah] the
+¶ But, if the citation is used even inline within the paragraph, [@marakah] the
 short form is necessary in the paragraph note.
 
 # Another heading
 
 ## A subheading
+
 ¶ Here, I cite to several pinpoints inline. Those pinpoints should be
 collected and then reported together in the paragraph notes
 below. Here's the first pinpoint [@hill, para. 5]. Here's the second
@@ -46,6 +47,14 @@ pinpoint [@hill, para. 20]. Here's the final pinpoint [@hill,
 para. 80].
 
 ## Another subheading
+
 ¶ I should also be able to cite books [@haack-defending-science,
 pp. 32-34]. Paragraph notes must appear in the order that their
-citations appeared inline in the paragraph. [@whiten] [@robitaille] [@hill]
+citations appeared inline in the paragraph. [@whiten] [@robitaille]
+[@hill]
+
+## Re: the previous subheading
+
+¶ The citation to _Hill_ sits alone on a newline, but should not be
+treated as a standalone paragraph note. It is an inline citation tied
+to the final sentence of that paragraph.

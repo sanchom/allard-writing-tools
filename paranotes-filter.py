@@ -114,75 +114,88 @@ def detect_duplicate_citations(input_path):
       citation_counts[citation_key] += 1
   return list(map(lambda x: x[0], filter(lambda kv: kv[1] >= 2, citation_counts.items())))
 
+def handle_newlines(raw_source):
+  # Don't mess with newlines in the pandoc header.
+  header = re.search(r'---.*?\.\.\.', raw_source, re.DOTALL)
+  if header:
+    raw_source = raw_source.replace(header.group(0), '')
+  paragraphed = re.sub(r'(.)\n(.)', r'\1 \2', raw_source)
+  if header:
+    paragraphed = header.group(0) + paragraphed
+  return paragraphed
+
 def run_filter(input_path, bibliography_path, csl_path):
   citation_db = {}
 
   append_short_form = detect_duplicate_citations(input_path)
 
+  raw_source = open(input_path, 'r', encoding='utf-8').read()
+
+  paragraphed_source = handle_newlines(raw_source)
+
   para_number = 0
-  with open(input_path, 'r', encoding='utf-8') as f:
-    in_a_citation = False
-    para_notes = {}
-    explicit_paragraph_note = True
-    for char in f.read():
-      # TODO: There's a bug here. A citation that begins on a new line
-      # will be considered an explicit paragraph note, even if it's in
-      # the middle of a body of text.
-      if char == '\n' and not in_a_citation:
-        explicit_paragraph_note = True
-      elif char != ' ' and char != '[' and not in_a_citation:
-        explicit_paragraph_note = False
-      if char in paragraph_markers or char == '#':
-        # Whenever we encounter a new paragraph or heading level, dump
-        # any paragraph-level notes from the previous paragraph.
-        print_paragraph_notes(para_notes, citation_db, append_short_form)
-        # Resetting the paragraph notes for the forthcoming paragraph.
-        para_notes = {}
-        if char in paragraph_markers:
-          para_number += 1
-          sys.stdout.write('{}.'.format(para_number))
-        elif char == '#':
-          sys.stdout.write(char)
-      elif char == '[':
-        in_a_citation = True
-        citation = ''
-      elif in_a_citation and char != ']':
-        # Keep building up the citation content.
-        citation += char
-      elif in_a_citation and char == ']':
-        # The citation is over.
-        citation_key = citation.split()[0].rstrip(',')
-        citation_pinpoint = ' '.join(citation.split()[1:]).strip()
-        if citation_key not in para_notes:
-          para_notes[citation_key] = {'pinpoints':{}}
-        if (citation_pinpoint):
-          pinpoint_type = detect_pinpoint_type(citation_pinpoint)
-          pinpoint_value = extract_pinpoint_value(citation_pinpoint)
-          if pinpoint_type not in para_notes[citation_key]['pinpoints']:
-            para_notes[citation_key]['pinpoints'][pinpoint_type] = []
-          para_notes[citation_key]['pinpoints'][pinpoint_type].append(pinpoint_value)
-        if citation_key not in citation_db:
-          # This is the first mention. Track the paragraph number. We'll
-          # also need to print the full citation in a section right
-          # before the next paragraph.
-          citation_db[citation_key] = {}
-          citation_db[citation_key]['original_paragraph'] = para_number
-          short_form = get_short_form(citation_key, bibliography_path, csl_path)
-          citation_db[citation_key]['short_form'] = short_form
-          if not explicit_paragraph_note:
-            sys.stdout.write('({})'.format(short_form))
-            append_short_form.append(citation_key)
-        else:
-          # This citation key has been mentioned before.
-          original_paragraph = citation_db[citation_key]['original_paragraph']
-          if original_paragraph != para_number:
-            para_notes[citation_key]['supra'] = True
-          if not explicit_paragraph_note:
-            short_form = citation_db[citation_key]['short_form']
-            sys.stdout.write('({})'.format(short_form))
-        in_a_citation = False
-      else:
+  in_a_citation = False
+  para_notes = {}
+  explicit_paragraph_note = True
+  for char in paragraphed_source:
+    # TODO: There's a bug here. A citation that begins on a new line
+    # will be considered an explicit paragraph note, even if it's in
+    # the middle of a body of text.
+    if char == '\n' and not in_a_citation:
+      explicit_paragraph_note = True
+    elif char != ' ' and char != '[' and not in_a_citation:
+      explicit_paragraph_note = False
+    if char in paragraph_markers or char == '#':
+      # Whenever we encounter a new paragraph or heading level, dump
+      # any paragraph-level notes from the previous paragraph.
+      print_paragraph_notes(para_notes, citation_db, append_short_form)
+      # Resetting the paragraph notes for the forthcoming paragraph.
+      para_notes = {}
+      if char in paragraph_markers:
+        para_number += 1
+        sys.stdout.write('{}.'.format(para_number))
+      elif char == '#':
         sys.stdout.write(char)
+    elif char == '[':
+      in_a_citation = True
+      citation = ''
+    elif in_a_citation and char != ']':
+      # Keep building up the citation content.
+      citation += char
+    elif in_a_citation and char == ']':
+      # The citation is over.
+      citation_key = citation.split()[0].rstrip(',')
+      citation_pinpoint = ' '.join(citation.split()[1:]).strip()
+      if citation_key not in para_notes:
+        para_notes[citation_key] = {'pinpoints':{}}
+      if (citation_pinpoint):
+        pinpoint_type = detect_pinpoint_type(citation_pinpoint)
+        pinpoint_value = extract_pinpoint_value(citation_pinpoint)
+        if pinpoint_type not in para_notes[citation_key]['pinpoints']:
+          para_notes[citation_key]['pinpoints'][pinpoint_type] = []
+        para_notes[citation_key]['pinpoints'][pinpoint_type].append(pinpoint_value)
+      if citation_key not in citation_db:
+        # This is the first mention. Track the paragraph number. We'll
+        # also need to print the full citation in a section right
+        # before the next paragraph.
+        citation_db[citation_key] = {}
+        citation_db[citation_key]['original_paragraph'] = para_number
+        short_form = get_short_form(citation_key, bibliography_path, csl_path)
+        citation_db[citation_key]['short_form'] = short_form
+        if not explicit_paragraph_note:
+          sys.stdout.write('({})'.format(short_form))
+          append_short_form.append(citation_key)
+      else:
+        # This citation key has been mentioned before.
+        original_paragraph = citation_db[citation_key]['original_paragraph']
+        if original_paragraph != para_number:
+          para_notes[citation_key]['supra'] = True
+        if not explicit_paragraph_note:
+          short_form = citation_db[citation_key]['short_form']
+          sys.stdout.write('({})'.format(short_form))
+      in_a_citation = False
+    else:
+      sys.stdout.write(char)
 
   print_paragraph_notes(para_notes, citation_db, append_short_form)
 

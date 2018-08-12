@@ -63,3 +63,53 @@ to the final sentence of that paragraph.
 
 ¶ Brackets like this "[" should also be able to be used [...] as in
 standard writing. They don't always imply a reference.
+
+# Some other formatting
+
+## Block quotations
+
+¶ This next bit should be a block quotation. It should have a larger
+left margin and a larger right margin than standard paragraphs. Here
+is an example:
+
+> (4) that the accused took, in a manner proportional to his or her
+participation in the commission of the planned offence, reasonable steps
+in the circumstances either to neutralize or otherwise cancel out the effects
+of his or her participation or to prevent the commission of the offence.
+
+## Lists
+
+¶ This is a significant substantive change to the defence. The
+analysis in Canadian cases until now has turned on whether there was
+timely and unequivocal communication of abandonment:
+
+* _R v Bird_, 2009 ABCA 45, rev'd in _Bird_, _supra_ para 18 --- The
+Supreme Court of Canada affirmed the dissent of Costigan JA, who held
+that a female accused who had helped lure the victim and her friend to
+a golf course, where the victim was sexually assaulted and killed, did
+not meet the requirements for abandonment. Her communication to the
+principal that she was taking the victim's friend to the car because
+she "doesn't need to see this" was insufficient evidence of either a
+change of intention or timely and unequivocal communication.
+
+* _R v Ball_, 2011 BCCA 11 --- In a case involving two accused in a
+joint assault, Ryan JA ruled that abandonment was not timely because
+the fatal injury had already occurred.
+
+## Itemized lists
+
+¶ It is well settled that the interpretation of a defence and whether
+there is an air of reality to support it being considered by a jury
+are both questions of law, reviewable on a standard of correctness. In
+concluding that the defence of abandonment lacked an air of reality
+and refusing to grant the appellant a new trial, the majority of the
+Supreme Court of Canada erred in three respects:
+
+I.  by adding a new element to the defence of abandonment,
+
+II.  by retrospectively applying the new defence to the facts of this
+case without giving the appellant a chance to address the new
+requirement; and
+
+III.  by incorrectly applying the air-of-reality test to both the old
+and new elements of the defence.

@@ -58,3 +58,8 @@ citations appeared inline in the paragraph. [@whiten] [@robitaille]
 ¶ The citation to _Hill_ sits alone on a newline, but should not be
 treated as a standalone paragraph note. It is an inline citation tied
 to the final sentence of that paragraph.
+
+## Using brackets without a reference
+
+¶ Brackets like this "[" should also be able to be used [...] as in
+standard writing. They don't always imply a reference.

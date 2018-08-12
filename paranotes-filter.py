@@ -134,6 +134,7 @@ def run_filter(input_path, bibliography_path, csl_path):
   paragraphed_source = handle_newlines(raw_source)
 
   para_number = 0
+  possibly_in_a_citation = False
   in_a_citation = False
   para_notes = {}
   explicit_paragraph_note = True
@@ -141,9 +142,9 @@ def run_filter(input_path, bibliography_path, csl_path):
     # TODO: There's a bug here. A citation that begins on a new line
     # will be considered an explicit paragraph note, even if it's in
     # the middle of a body of text.
-    if char == '\n' and not in_a_citation:
+    if char == '\n' and not possibly_in_a_citation:
       explicit_paragraph_note = True
-    elif char != ' ' and char != '[' and not in_a_citation:
+    elif char != ' ' and char != '[' and not possibly_in_a_citation:
       explicit_paragraph_note = False
     if char in paragraph_markers or char == '#':
       # Whenever we encounter a new paragraph or heading level, dump
@@ -157,8 +158,15 @@ def run_filter(input_path, bibliography_path, csl_path):
       elif char == '#':
         sys.stdout.write(char)
     elif char == '[':
-      in_a_citation = True
+      possibly_in_a_citation = True
       citation = ''
+    elif char == '@' and possibly_in_a_citation:
+      in_a_citation = True
+      citation += char
+    elif not in_a_citation and possibly_in_a_citation and char != '@':
+      possibly_in_a_citation = False
+      sys.stdout.write('[')
+      sys.stdout.write(char)
     elif in_a_citation and char != ']':
       # Keep building up the citation content.
       citation += char
@@ -194,6 +202,7 @@ def run_filter(input_path, bibliography_path, csl_path):
           short_form = citation_db[citation_key]['short_form']
           sys.stdout.write('({})'.format(short_form))
       in_a_citation = False
+      possibly_in_a_citation = False
     else:
       sys.stdout.write(char)
 

@@ -45,6 +45,31 @@ def get_term(pinpoint_type, plural, include_dot):
   except:
     raise NotImplementedError('Cannot get term for pinpoint type: {}'.format(pinpoint_type))
 
+def render_note(key, content, citation_db, append_short_form):
+  if 'supra' in content:
+    sys.stdout.write('{}, _supra_ para {}'.format(citation_db[key]['short_form'], citation_db[key]['original_paragraph']))
+  else:
+    sys.stdout.write('[{}'.format(key))
+  for pinpoint_type, pinpoint_list in content['pinpoints'].items():
+    plural = (len(pinpoint_list) > 1 or is_range(pinpoint_list[0]))
+    if 'supra' in content:
+      # No period for pinpoint signal in supra context.
+      sys.stdout.write(' at {} '.format(get_term(pinpoint_type, plural, False)))
+      for pinpoint in pinpoint_list[:-1]:
+        sys.stdout.write('{}, '.format(pinpoint))
+      sys.stdout.write('{}'.format(pinpoint_list[-1]))
+    else:
+      # Period needed in the pinpoint signal here for Pandoc to
+      # render the full note with proper pinpointing.
+      sys.stdout.write(' {} '.format(get_term(pinpoint_type, plural, True)))
+      for pinpoint in pinpoint_list[:-1]:
+        sys.stdout.write('{}, '.format(pinpoint))
+      sys.stdout.write('{}'.format(pinpoint_list[-1]))
+  if not 'supra' in content:
+    sys.stdout.write(']')
+    if key in append_short_form:
+      sys.stdout.write(' [{}]'.format(citation_db[key]['short_form']))
+
 def print_paragraph_notes(para_notes, citation_db, append_short_form):
   if para_notes.items():
     sys.stdout.write('\n')
@@ -55,29 +80,7 @@ def print_paragraph_notes(para_notes, citation_db, append_short_form):
   for note_id, (key, content) in enumerate(para_notes.items(), 1):
     if note_id != 1:
       sys.stdout.write('\\setlength{\\parskip}{0.25em}\n\n')
-    if 'supra' in content:
-      sys.stdout.write('{}, _supra_ para {}'.format(citation_db[key]['short_form'], citation_db[key]['original_paragraph']))
-    else:
-      sys.stdout.write('[{}'.format(key))
-    for pinpoint_type, pinpoint_list in content['pinpoints'].items():
-      plural = (len(pinpoint_list) > 1 or is_range(pinpoint_list[0]))
-      if 'supra' in content:
-        # No period for pinpoint signal in supra context.
-        sys.stdout.write(' at {} '.format(get_term(pinpoint_type, plural, False)))
-        for pinpoint in pinpoint_list[:-1]:
-          sys.stdout.write('{}, '.format(pinpoint))
-        sys.stdout.write('{}'.format(pinpoint_list[-1]))
-      else:
-        # Period needed in the pinpoint signal here for Pandoc to
-        # render the full note with proper pinpointing.
-        sys.stdout.write(' {} '.format(get_term(pinpoint_type, plural, True)))
-        for pinpoint in pinpoint_list[:-1]:
-          sys.stdout.write('{}, '.format(pinpoint))
-        sys.stdout.write('{}'.format(pinpoint_list[-1]))
-    if not 'supra' in content:
-      sys.stdout.write(']')
-      if key in append_short_form:
-        sys.stdout.write(' [{}]'.format(citation_db[key]['short_form']))
+    render_note(key, content, citation_db, append_short_form)
     sys.stdout.write('.')
     if note_id != num_notes:
       # sys.stdout.write('\n\n\\vspace{-20pt}\n\n')
@@ -109,7 +112,14 @@ def detect_duplicate_citations(input_path):
   citation_counts = collections.defaultdict(int)
   with open(input_path, 'r', encoding='utf-8') as f:
     content = f.read()
+    # Finding all citations to be at most marked inline but rendered
+    # more fully as paragraph notes.
     for m in re.finditer('\[(@[^\s,\]]+)', content):
+      citation_key = m.group(1)
+      citation_counts[citation_key] += 1
+    # Finding all citations to be rendered fully inline {@ref-id},
+    # without a paragraph note.
+    for m in re.finditer('\{(@[^\s,\}]+)', content):
       citation_key = m.group(1)
       citation_counts[citation_key] += 1
   return list(map(lambda x: x[0], filter(lambda kv: kv[1] >= 2, citation_counts.items())))
@@ -136,12 +146,11 @@ def run_filter(input_path, bibliography_path, csl_path):
   para_number = 0
   possibly_in_a_citation = False
   in_a_citation = False
+  possibly_in_an_inline_citation = False
+  in_an_inline_citation = False
   para_notes = {}
   explicit_paragraph_note = True
   for char in paragraphed_source:
-    # TODO: There's a bug here. A citation that begins on a new line
-    # will be considered an explicit paragraph note, even if it's in
-    # the middle of a body of text.
     if char == '\n' and not possibly_in_a_citation:
       explicit_paragraph_note = True
     elif char != ' ' and char != '[' and not possibly_in_a_citation:
@@ -203,6 +212,52 @@ def run_filter(input_path, bibliography_path, csl_path):
           sys.stdout.write('({})'.format(short_form))
       in_a_citation = False
       possibly_in_a_citation = False
+      in_an_inline_citation = False
+      possibly_in_an_inline_citation = False
+    elif char == '{':
+      possibly_in_an_inline_citation = True
+      citation = ''
+    elif char == '@' and possibly_in_an_inline_citation:
+      in_an_inline_citation = True
+      citation += char
+    elif not in_an_inline_citation and possibly_in_an_inline_citation and char != '@':
+      possibly_in_an_inline_citation = False
+      sys.stdout.write('{')
+      sys.stdout.write(char)
+    elif in_an_inline_citation and char != '}':
+      # Keep building up the citation content.
+      citation += char
+    elif in_an_inline_citation and char == '}':
+      # The citation is over.
+      inline_note = {}
+      citation_key = citation.split()[0].rstrip(',')
+      citation_pinpoint = ' '.join(citation.split()[1:]).strip()
+      if citation_key not in inline_note:
+        inline_note[citation_key] = {'pinpoints':{}}
+      if (citation_pinpoint):
+        pinpoint_type = detect_pinpoint_type(citation_pinpoint)
+        pinpoint_value = extract_pinpoint_value(citation_pinpoint)
+        if pinpoint_type not in inline_note[citation_key]['pinpoints']:
+          inline_note[citation_key]['pinpoints'][pinpoint_type] = []
+        inline_note[citation_key]['pinpoints'][pinpoint_type].append(pinpoint_value)
+      if citation_key not in citation_db:
+        # This is the first mention. Track the paragraph number. We'll
+        # also need to print the full citation in a section right
+        # before the next paragraph.
+        citation_db[citation_key] = {}
+        citation_db[citation_key]['original_paragraph'] = para_number
+        short_form = get_short_form(citation_key, bibliography_path, csl_path)
+        citation_db[citation_key]['short_form'] = short_form
+        render_note(citation_key, inline_note[citation_key], citation_db, append_short_form)
+      else:
+        # This citation key has been mentioned before.
+        original_paragraph = citation_db[citation_key]['original_paragraph']
+        inline_note[citation_key]['supra'] = True
+        render_note(citation_key, inline_note[citation_key], citation_db, append_short_form)
+      in_a_citation = False
+      possibly_in_a_citation = False
+      in_an_inline_citation = False
+      possibly_in_an_inline_citation = False
     else:
       sys.stdout.write(char)
 

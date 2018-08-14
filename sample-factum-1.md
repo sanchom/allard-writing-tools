@@ -77,13 +77,22 @@ participation in the commission of the planned offence, reasonable steps
 in the circumstances either to neutralize or otherwise cancel out the effects
 of his or her participation or to prevent the commission of the offence.
 
-## Lists
+## Lists (and inline citations)
+
+¶ Sometimes, the factum might need to use inline citations for some
+reason. I don't see how this is allowed by the formatting
+requirements, but the sample factum uses them when it discusses
+several cases in a list. In any case, it should not be hard to support
+inline citations. I'll use `{` `@ref-id` `}` to force an inline
+variant. And, I'll cite _Bird_ here so it can be used in the example below.
+
+[@bird-scc]
 
 ¶ This is a significant substantive change to the defence. The
 analysis in Canadian cases until now has turned on whether there was
 timely and unequivocal communication of abandonment:
 
-* _R v Bird_, 2009 ABCA 45, rev'd in _Bird_, _supra_ para 18 --- The
+* {@bird-ca}, rev'd in {@bird-scc} --- The
 Supreme Court of Canada affirmed the dissent of Costigan JA, who held
 that a female accused who had helped lure the victim and her friend to
 a golf course, where the victim was sexually assaulted and killed, did
@@ -92,7 +101,7 @@ principal that she was taking the victim's friend to the car because
 she "doesn't need to see this" was insufficient evidence of either a
 change of intention or timely and unequivocal communication.
 
-* _R v Ball_, 2011 BCCA 11 --- In a case involving two accused in a
+* {@ball} --- In a case involving two accused in a
 joint assault, Ryan JA ruled that abandonment was not timely because
 the fatal injury had already occurred.
 

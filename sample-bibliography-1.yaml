@@ -71,4 +71,22 @@ references:
   title-short: Whiten
   authority: '2002 SCC 18'
   source: '[2002] SCR 295'
+
+- id: bird-scc
+  type: legal_case
+  title: R v Bird
+  title-short: Bird-SCC
+  authority: '2009 SCC 60'
+
+- id: bird-ca
+  type: legal_case
+  title: R v Bird
+  title-short: Bird-CA
+  authority: '2009 ABCA 45'
+
+- id: ball
+  type: legal_case
+  title: R v Ball
+  title-short: Ball
+  authority: '2011 BCCA 11'
 ...

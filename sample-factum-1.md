@@ -122,3 +122,30 @@ requirement; and
 
 III.  by incorrectly applying the air-of-reality test to both the old
 and new elements of the defence.
+
+## Quoting statutes
+
+¶ I've added a special annotation that lets you indicate in the text
+source when you're quoting a statute. This is needed because of the
+often-nested nature of statutes and the large variety of label
+types. Within the special `statute_quote` environment, labels are
+extracted and whitespace is used to infer the various nesting levels
+of sections, subsections, paragraphs, subparagraphs, etc. For example,
+this is Canadian Aviation Regulation 602.07 (3):
+
+statute_quote{
+(3)  The pilot-in-command of a VFR aircraft operating in Class B
+     airspace in accordance with an air traffic control clearance
+     shall, when it becomes evident that it will not be possible to
+     operate the aircraft in VMC at the altitude or along the route
+     specified in the air traffic control clearance,
+     (a)  where the airspace is a control zone, request authorization
+	      to operate the aircraft in special VFR flight; and
+     (b)  in any other case,
+          (i)  request an amended air traffic control clearance that
+		       will enable the aircraft to be operated in VMC to the
+		       destination specified in the flight plan or to an
+		       alternate aerodrome, or
+          (ii)  request an air traffic control clearance to operate
+			    the aircraft in IFR flight.
+}

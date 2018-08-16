@@ -16,6 +16,73 @@ pinpoint_terms = {'para': {'singular':'para.',
                            'plural':'paras.'},
                   'page': {'singular':'p.',
                            'plural':'pp.'}}
+def convert_into_node(node_source):
+  label_pattern = re.compile(r'^(\S+)  ')
+  label_match = label_pattern.search(node_source)
+  label = label_match.group(1)
+  content = node_source[label_match.end():]
+  subnode_start_pattern = re.compile(r' +\S+  ')
+  subnode_start_match = subnode_start_pattern.search(content)
+  subnodes = []
+  if subnode_start_match:
+    subnode_source = content[subnode_start_match.start():]
+    content = content[:subnode_start_match.start()]
+    # How many spaces lead this subnode's labels?
+    num_leading_spaces = subnode_start_match.group(0).rstrip().count(' ')
+    stripper = re.compile(r'^[\s]{{{0}}}(\S+  )'.format(num_leading_spaces), re.MULTILINE)
+    subnode_source = stripper.sub(r'\1', subnode_source)
+    subnodes = get_nodes(subnode_source)
+  content = re.sub(r'\s+', ' ', content).strip()
+
+  return (label, content, subnodes)
+
+def split_into_nodes(raw_quote_source):
+  # Split at newline, non-whitespace, then two spaces.
+  node_start_pattern = re.compile(r'^\S+  ', re.MULTILINE)
+
+  node_sources = []
+  remaining_source = raw_quote_source
+  while True:
+    this_node_index = node_start_pattern.search(remaining_source).start()
+    next_node_match = node_start_pattern.search(remaining_source, this_node_index + 1)
+    if next_node_match:
+      next_node_index = next_node_match.start()
+      node_source = remaining_source[this_node_index:next_node_index]
+      node_sources.append(node_source)
+      remaining_source = remaining_source[next_node_index:]
+    else:
+      break
+  node_source = remaining_source[this_node_index:]
+  node_sources.append(node_source)
+  return node_sources
+
+def get_nodes(text_source):
+  node_sources = split_into_nodes(text_source)
+  nodes = []
+  for node_source in node_sources:
+    nodes.append(convert_into_node(node_source))
+  return nodes
+
+def get_transformed_nodes(nodes):
+  result = ''
+  result += '\\begin{quote}\n'
+  for node in nodes:
+    result = append_transformed_node(result, node, level=0)
+  result += '\\end{quote}\n'
+  return result
+
+def append_transformed_node(result, top_level_node, level):
+  label = top_level_node[0]
+  content = top_level_node[1]
+  subnodes = top_level_node[2]
+  result += '\\begin{{enumerate}}[labelindent={}in, leftmargin={}in]\n'.format(0.25 * level, 0.25 * level)
+  result += '\\item [{}]\n'.format(label)
+  result += content + '\n'
+  result += '\\end{enumerate}\n'
+  result += '\n'
+  for node in subnodes:
+    result = append_transformed_node(result, node, level + 1)
+  return result
 
 def is_range(pinpoint_value):
   return pinpoint_value.count('-')
@@ -124,15 +191,55 @@ def detect_duplicate_citations(input_path):
       citation_counts[citation_key] += 1
   return list(map(lambda x: x[0], filter(lambda kv: kv[1] >= 2, citation_counts.items())))
 
-def handle_newlines(raw_source):
+def transform_statute_quote(raw_quote_source):
+  """ This is what the incoming source looks like:
+
+statute_quote{
+(3)  The pilot-in-command of a VFR aircraft operating in Class B
+     airspace in accordance with an air traffic control clearance
+     shall, when it becomes evident that it will not be possible to
+     operate the aircraft in VMC at the altitude or along the route
+     specified in the air traffic control clearance,
+     (a)  where the airspace is a control zone, request authorization
+          to operate the aircraft in special VFR flight; and
+     (b)  in any other case,
+          (i)  request an amended air traffic control clearance that
+               will enable the aircraft to be operated in VMC to the
+               destination specified in the flight plan or to an
+               alternate aerodrome, or
+          (ii)  request an air traffic control clearance to operate
+                the aircraft in IFR flight.
+}
+
+  """
+  raw_quote_source = raw_quote_source.replace(r'statute_quote{', '').rstrip('}').strip('\n')
+  nodes = get_nodes(raw_quote_source)
+  return get_transformed_nodes(nodes)
+
+def special_preprocessing(raw_source):
   # Don't mess with newlines in the pandoc header.
   header = re.search(r'---.*?\.\.\.', raw_source, re.DOTALL)
+  preformatted_regions = re.findall(r'```.*?```', raw_source, re.DOTALL)
+  for i, r in enumerate(preformatted_regions):
+    raw_source = raw_source.replace(r, '<preformatted_{}>'.format(i))
+  statute_quotes = re.findall(r'statute_quote\{.*?\}', raw_source, re.DOTALL)
+  for i, r in enumerate(statute_quotes):
+    raw_source = raw_source.replace(r, '<statute_quote_{}>'.format(i))
   if header:
-    raw_source = raw_source.replace(header.group(0), '')
+    raw_source = raw_source.replace(header.group(0), '<header>')
   paragraphed = re.sub(r'(.)\n(.)', r'\1 \2', raw_source)
+  # Reattaching the header
   if header:
-    paragraphed = header.group(0) + paragraphed
+    paragraphed = re.sub(r'\<header\>', header.group(0), paragraphed)
+  for i, r in enumerate(preformatted_regions):
+    paragraphed = paragraphed.replace('<preformatted_{}>'.format(i), r)
+  for i, r in enumerate(statute_quotes):
+    paragraphed = paragraphed.replace('<statute_quote_{}>'.format(i), transform_statute_quote(r))
   return paragraphed
+
+def bracket_lists(raw_source):
+  # Looking for newline, whitespace, then roman numeral then two spaces.
+  pass
 
 def run_filter(input_path, bibliography_path, csl_path):
   citation_db = {}
@@ -141,7 +248,7 @@ def run_filter(input_path, bibliography_path, csl_path):
 
   raw_source = open(input_path, 'r', encoding='utf-8').read()
 
-  paragraphed_source = handle_newlines(raw_source)
+  paragraphed_source = special_preprocessing(raw_source)
 
   para_number = 0
   possibly_in_a_citation = False

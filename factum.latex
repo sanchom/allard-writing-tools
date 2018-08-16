@@ -12,6 +12,7 @@ $if(fullpage)$
 $endif$
 \usepackage{setspace}
 \expandafter\def\expandafter\quote\expandafter{\quote\onehalfspacing}
+\expandafter\def\expandafter\verbatim\expandafter{\verbatim\onehalfspacing}
 \newlength{\mainstretch}
 \setstretch{1.0}
 \def \mainstretch {1.0}

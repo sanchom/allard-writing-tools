@@ -191,10 +191,10 @@ def detect_duplicate_citations(input_path):
       citation_counts[citation_key] += 1
   return list(map(lambda x: x[0], filter(lambda kv: kv[1] >= 2, citation_counts.items())))
 
-def transform_statute_quote(raw_quote_source):
+def transform_custom_list(raw_quote_source):
   """ This is what the incoming source looks like:
 
-statute_quote{
+custom_list{
 (3)  The pilot-in-command of a VFR aircraft operating in Class B
      airspace in accordance with an air traffic control clearance
      shall, when it becomes evident that it will not be possible to
@@ -212,7 +212,7 @@ statute_quote{
 }
 
   """
-  raw_quote_source = raw_quote_source.replace(r'statute_quote{', '').rstrip('}').strip('\n')
+  raw_quote_source = raw_quote_source.replace(r'custom_list{', '').rstrip('}').strip('\n')
   nodes = get_nodes(raw_quote_source)
   return get_transformed_nodes(nodes)
 
@@ -222,9 +222,9 @@ def special_preprocessing(raw_source):
   preformatted_regions = re.findall(r'```.*?```', raw_source, re.DOTALL)
   for i, r in enumerate(preformatted_regions):
     raw_source = raw_source.replace(r, '<preformatted_{}>'.format(i))
-  statute_quotes = re.findall(r'statute_quote\{.*?\}', raw_source, re.DOTALL)
-  for i, r in enumerate(statute_quotes):
-    raw_source = raw_source.replace(r, '<statute_quote_{}>'.format(i))
+  custom_lists = re.findall(r'custom_list\{.*?\}', raw_source, re.DOTALL)
+  for i, r in enumerate(custom_lists):
+    raw_source = raw_source.replace(r, '<custom_list_{}>'.format(i))
   if header:
     raw_source = raw_source.replace(header.group(0), '<header>')
   paragraphed = re.sub(r'(.)\n(.)', r'\1 \2', raw_source)
@@ -233,8 +233,8 @@ def special_preprocessing(raw_source):
     paragraphed = re.sub(r'\<header\>', header.group(0), paragraphed)
   for i, r in enumerate(preformatted_regions):
     paragraphed = paragraphed.replace('<preformatted_{}>'.format(i), r)
-  for i, r in enumerate(statute_quotes):
-    paragraphed = paragraphed.replace('<statute_quote_{}>'.format(i), transform_statute_quote(r))
+  for i, r in enumerate(custom_lists):
+    paragraphed = paragraphed.replace('<custom_list_{}>'.format(i), transform_custom_list(r))
   return paragraphed
 
 def bracket_lists(raw_source):

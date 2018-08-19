@@ -10,6 +10,7 @@ $endif$
 $if(fullpage)$
 \usepackage{fullpage}
 $endif$
+\usepackage{tabularx}
 \usepackage{setspace}
 \expandafter\def\expandafter\quote\expandafter{\quote\onehalfspacing}
 \expandafter\def\expandafter\verbatim\expandafter{\verbatim\onehalfspacing}
@@ -237,7 +238,7 @@ $endif$
 \newcounter{thispage}
 \usepackage{forloop}
 \usepackage{refcount}
-\newcommand{\pagelist}[2]{\setcounter{stopcondition}{#2+1}\setcounter{prevpage}{0}\forloop{refcounter}{1}{\value{refcounter} < \value{stopcondition}}{\setcounter{thispage}{\getpagerefnumber{#1-\arabic{refcounter}}}\ifthenelse{\equal{\value{prevpage}}{\value{thispage}}}{}{\setcounter{prevpage}{\value{thispage}}\arabic{thispage}\ifthenelse{\equal{\arabic{refcounter}}{#2}}{}{, }}}}
+\newcommand{\pagelist}[2]{\setcounter{stopcondition}{#2+1}\setcounter{prevpage}{0}\forloop{refcounter}{1}{\value{refcounter} < \value{stopcondition}}{\setcounter{thispage}{\getpagerefnumber{#1-\arabic{refcounter}}}\ifthenelse{\equal{\value{prevpage}}{\value{thispage}}}{}{\setcounter{prevpage}{\value{thispage}}\ifthenelse{\equal{\arabic{refcounter}}{1}}{}{, }\arabic{thispage}}}}
 
 $for(header-includes)$
 $header-includes$

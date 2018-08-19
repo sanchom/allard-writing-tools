@@ -181,6 +181,21 @@ def get_short_form(citation_key, bibliography_path, csl_path):
   short_form = forms[-1]
   return short_form
 
+@functools.lru_cache(maxsize=None)
+def get_long_form(citation_key, bibliography_path, csl_path):
+  temp_path = 'temp.md'
+  with open(temp_path, 'w') as temp_file:
+    temp_file.write('[{}]\n\n[{}]\n'.format(citation_key, citation_key))
+  pandoc_command = 'pandoc temp.md --bibliography {} --csl {} -t plain'.format(bibliography_path, csl_path)
+  pandoc_output = subprocess.check_output(shlex.split(pandoc_command)).decode('utf-8')
+  try:
+    os.remove(temp_path)
+  except:
+    pass
+  forms = pandoc_output.split('\n\n')
+  long_form = forms[0].replace('\n', ' ')
+  return long_form
+
 def detect_duplicate_citations(input_path):
   citation_counts = collections.defaultdict(int)
   with open(input_path, 'r', encoding='utf-8') as f:
@@ -376,12 +391,16 @@ def run_filter(input_path, bibliography_path, csl_path):
 
   print_paragraph_notes(para_notes, citation_db, append_short_form)
 
-def add_table_of_authorities():
+def add_table_of_authorities(bibliography_path, csl_path):
   sys.stdout.write('\n\n')
+  sys.stdout.write('\\textbf{Cases}\\hfill\\textbf{Pages}\n\n')
+  sys.stdout.write('\\begin{tabularx}{\linewidth}{ X r }\n')
   for key, count in ref_counts.items():
-    sys.stdout.write('{}: '.format(key.lstrip('@')))
-    sys.stdout.write('\n\\pagelist{{ref:{}}}{{{}}}'.format(key, count))
-    sys.stdout.write('\n\n')
+    long_form = get_long_form(key, bibliography_path, csl_path)
+    long_form = re.sub(r'_(.*?)_', r'\\textit{\1}', long_form)
+    sys.stdout.write('{} & '.format(long_form))
+    sys.stdout.write('\\pagelist{{ref:{}}}{{{}}} \\\\\n'.format(key, count))
+  sys.stdout.write('\\end{tabularx}\n\n')
 
 if (__name__ == '__main__'):
   try:
@@ -399,4 +418,4 @@ if (__name__ == '__main__'):
     sys.exit(1)
 
   run_filter(input_path, bibliography_path, csl_path)
-  add_table_of_authorities()
+  add_table_of_authorities(bibliography_path, csl_path)

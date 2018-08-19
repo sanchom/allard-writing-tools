@@ -264,6 +264,66 @@ $endif$
 $if(title)$
 \maketitle
 $endif$
+$if(factum_title)$
+\begin{titlepage}
+\begin{centering}
+
+\textbf{\Large IN THE MOOT COURT OF THE GALE CUP}
+
+(ON APPEAL FROM THE SUPREME COURT OF CANADA)
+
+\end{centering}
+
+BETWEEN:
+
+\begin{centering}
+
+\textbf{\large{APPELLANT'S NAME}}
+
+\end{centering}
+
+\hfill APPELLANT
+
+AND:
+
+\begin{centering}
+
+\textbf{\large{RESPONDENT'S NAME}}
+
+\end{centering}
+
+\hfill RESPONDENT
+
+\vspace{10mm}
+\hrule
+\centering\textbf{\large{APPELLANT’S FACTUM}}
+\vspace{3mm}
+\hrule
+
+\begin{minipage}{2.0in}
+\onehalfspacing
+[Last, First]
+
+[Last, First]
+
+\vspace{1cm}
+
+Counsel for the Appellant
+\end{minipage}
+\hfill
+\begin{minipage}{2.0in}
+\onehalfspacing
+[Last, First]
+
+[Last, First]
+
+\vspace{1cm}
+
+Counsel for the Respondant
+\end{minipage}
+
+\end{titlepage}
+$endif$
 $if(abstract)$
 \begin{abstract}
 $abstract$

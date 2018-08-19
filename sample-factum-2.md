@@ -1,6 +1,7 @@
 ---
 numbersections: true
 linestretch: 2
+factum_title: true
 ...
 
 # Attribution

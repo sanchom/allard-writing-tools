@@ -240,6 +240,8 @@ $endif$
 \usepackage{refcount}
 \newcommand{\pagelist}[2]{\setcounter{stopcondition}{#2+1}\setcounter{prevpage}{0}\forloop{refcounter}{1}{\value{refcounter} < \value{stopcondition}}{\setcounter{thispage}{\getpagerefnumber{#1-\arabic{refcounter}}}\ifthenelse{\equal{\value{prevpage}}{\value{thispage}}}{}{\setcounter{prevpage}{\value{thispage}}\ifthenelse{\equal{\arabic{refcounter}}{1}}{}{, }\arabic{thispage}}}}
 
+\def\mydotfill{\unskip\nobreak\leaders\hbox{ .}\hskip 4em plus 1fill\relax}
+
 $for(header-includes)$
 $header-includes$
 $endfor$

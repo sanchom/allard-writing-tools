@@ -392,15 +392,13 @@ def run_filter(input_path, bibliography_path, csl_path):
   print_paragraph_notes(para_notes, citation_db, append_short_form)
 
 def add_table_of_authorities(bibliography_path, csl_path):
-  sys.stdout.write('\n\n')
-  sys.stdout.write('\\textbf{Cases}\\hfill\\textbf{Pages}\n\n')
-  sys.stdout.write('\\begin{tabularx}{\linewidth}{ X r }\n')
+  sys.stdout.write('\n\n\\newpage\n\n\\begin{center}\\underline{\\textsc{Table of Authorities}}\\end{center}\n\n')
+  sys.stdout.write('\\textbf{Cases}\\hfill\\textbf{Pages}\n\n\\raggedright\n\n')
   for key, count in ref_counts.items():
     long_form = get_long_form(key, bibliography_path, csl_path)
     long_form = re.sub(r'_(.*?)_', r'\\textit{\1}', long_form)
-    sys.stdout.write('{} & '.format(long_form))
-    sys.stdout.write('\\pagelist{{ref:{}}}{{{}}} \\\\\n'.format(key, count))
-  sys.stdout.write('\\end{tabularx}\n\n')
+    sys.stdout.write('{} \\mydotfill '.format(long_form))
+    sys.stdout.write('\\pagelist{{ref:{}}}{{{}}}\n\n'.format(key, count))
 
 if (__name__ == '__main__'):
   try:

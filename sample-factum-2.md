@@ -2,6 +2,15 @@
 numbersections: true
 linestretch: 2
 factum_title: true
+court: MOOT COURT OF THE GALE CUP
+appeal_from: THE SUPREME COURT OF CANADA
+whose: APPELLANT
+appellant: CATHIE GAUTHIER
+respondent: HER MAJESTY THE QUEEN
+appellant_counsel_1: McCann, Sancho
+appellant_counsel_2: Other, Name
+respondent_counsel_1: Respondant, Counsel
+respondent_counsel_2: Another, Name
 ...
 
 # Attribution

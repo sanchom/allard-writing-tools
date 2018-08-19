@@ -270,43 +270,60 @@ $if(factum_title)$
 \begin{titlepage}
 \begin{centering}
 
-\textbf{\Large IN THE MOOT COURT OF THE GALE CUP}
+\textbf{\Large IN THE $court$}
 
-(ON APPEAL FROM THE SUPREME COURT OF CANADA)
+$if(appeal_from)$
+(ON APPEAL FROM $appeal_from$)
+$endif$
 
 \end{centering}
 
 BETWEEN:
 
-\begin{centering}
-
+$if(appellant)$
+\begin{center}
+\textbf{\large{$appellant$}}
+\end{center}
+$else$
+\begin{center}
 \textbf{\large{APPELLANT'S NAME}}
-
-\end{centering}
+\end{center}
+$endif$
 
 \hfill APPELLANT
 
 AND:
 
-\begin{centering}
 
+$if(respondent)$
+\begin{center}
+\textbf{\large{$respondent$}}
+\end{center}
+$else$
+\begin{center}
 \textbf{\large{RESPONDENT'S NAME}}
+\end{center}
+$endif$
 
-\end{centering}
 
 \hfill RESPONDENT
 
 \vspace{10mm}
 \hrule
-\centering\textbf{\large{APPELLANT’S FACTUM}}
+\centering\large \textbf{$whose$'S FACTUM}
 \vspace{3mm}
 \hrule
 
 \begin{minipage}{2.0in}
 \onehalfspacing
-[Last, First]
+$if(appellant_counsel_1)$
+$appellant_counsel_1$
+$endif$
 
-[Last, First]
+$if(appellant_counsel_2)$
+$appellant_counsel_2$
+$endif$
+
 
 \vspace{1cm}
 
@@ -315,13 +332,17 @@ Counsel for the Appellant
 \hfill
 \begin{minipage}{2.0in}
 \onehalfspacing
-[Last, First]
+$if(respondent_counsel_1)$
+$respondent_counsel_1$
+$endif$
 
-[Last, First]
+$if(respondent_counsel_2)$
+$respondent_counsel_2$
+$endif$
 
 \vspace{1cm}
 
-Counsel for the Respondant
+Counsel for the Respondent
 \end{minipage}
 
 \end{titlepage}

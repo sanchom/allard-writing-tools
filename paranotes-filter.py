@@ -16,6 +16,9 @@ pinpoint_terms = {'para': {'singular':'para.',
                            'plural':'paras.'},
                   'page': {'singular':'p.',
                            'plural':'pp.'}}
+
+ref_counts = collections.defaultdict(int)
+
 def convert_into_node(node_source):
   label_pattern = re.compile(r'^(\S+)  ')
   label_match = label_pattern.search(node_source)
@@ -113,6 +116,9 @@ def get_term(pinpoint_type, plural, include_dot):
     raise NotImplementedError('Cannot get term for pinpoint type: {}'.format(pinpoint_type))
 
 def render_note(key, content, citation_db, append_short_form):
+  ref_counts[key] += 1
+  count = ref_counts[key]
+  sys.stdout.write('\n\\label{{ref:{}-{}}}\n'.format(key, count))
   if 'supra' in content:
     sys.stdout.write('{}, _supra_ para {}'.format(citation_db[key]['short_form'], citation_db[key]['original_paragraph']))
   else:
@@ -370,6 +376,13 @@ def run_filter(input_path, bibliography_path, csl_path):
 
   print_paragraph_notes(para_notes, citation_db, append_short_form)
 
+def add_table_of_authorities():
+  sys.stdout.write('\n\n')
+  for key, count in ref_counts.items():
+    sys.stdout.write('{}: '.format(key.lstrip('@')))
+    sys.stdout.write('\n\\pagelist{{ref:{}}}{{{}}}'.format(key, count))
+    sys.stdout.write('\n\n')
+
 if (__name__ == '__main__'):
   try:
     input_path = sys.argv[1]
@@ -386,3 +399,4 @@ if (__name__ == '__main__'):
     sys.exit(1)
 
   run_filter(input_path, bibliography_path, csl_path)
+  add_table_of_authorities()

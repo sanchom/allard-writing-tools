@@ -242,6 +242,30 @@ $endif$
 
 \def\mydotfill{\unskip\nobreak\leaders\hbox{ .}\hskip 12em plus 1fill\relax}
 
+\def\addsignatureblock{
+\begin{center}\textsc{All of Which is Respectfully Submitted.}\end{center}
+\vspace{1cm}
+\begin{minipage}{0.4\textwidth}
+\onehalfspacing
+\hrule
+\vspace{2mm}
+
+$appellant_counsel_1$
+
+Counsel for the appellant
+\end{minipage}
+\hfill
+\begin{minipage}{0.4\textwidth}
+\onehalfspacing
+\hrule
+\vspace{2mm}
+
+$appellant_counsel_2$
+
+Counsel for the appellant
+\end{minipage}
+}
+
 $for(header-includes)$
 $header-includes$
 $endfor$
@@ -380,23 +404,6 @@ $endif$
 
 $body$
 
-$if(natbib)$
-$if(bibliography)$
-$if(biblio-title)$
-$if(book-class)$
-\renewcommand\bibname{$biblio-title$}
-$else$
-\renewcommand\refname{$biblio-title$}
-$endif$
-$endif$
-\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
-
-$endif$
-$endif$
-$if(biblatex)$
-\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
-
-$endif$
 $for(include-after)$
 $include-after$
 

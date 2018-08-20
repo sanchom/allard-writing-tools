@@ -20,7 +20,6 @@ pinpoint_terms = {'para': {'singular':'para.',
                   'section': {'singular':'s.',
                               'plural':'ss.',
                               'alternate':'sec.'}
-
 }
 
 ref_counts = collections.defaultdict(int)
@@ -405,6 +404,8 @@ def load_bibliography_yaml(bibliography_path):
   return y
 
 def get_sort_key(ref_key, bibliography_path):
+  # TODO: Make this work for manually rendered citations (those that
+  # don't go through CSL).
   references = load_bibliography_yaml(bibliography_path)['references']
   item = [item for item in references if item['id'] == ref_key.strip('@')]
   item = item[0]
@@ -418,14 +419,14 @@ def get_sort_key(ref_key, bibliography_path):
 def add_table_of_authorities(bibliography_path, csl_path):
   sys.stdout.write('\n\n\\newpage\n\n\\begin{center}\\underline{\\textsc{Table of Authorities}}\\end{center}\n\n')
   sys.stdout.write('\\hfill\\textsc{Pages}\n\n\\raggedright\n\n')
-  # TODO: Actually look to the reference's .yaml content to grab the
-  # case name (for legal cases), or author's family name (for books,
-  # etc.), or title (otherwise).
   for key, count in sorted(ref_counts.items(), key=lambda rec: get_sort_key(rec[0], bibliography_path)):
     long_form = get_long_form(key, bibliography_path, csl_path)
     long_form = re.sub(r'_(.*?)_', r'\\textit{\1}', long_form)
     sys.stdout.write('\\onehalfspacing {} \\mydotfill '.format(long_form))
     sys.stdout.write('\\pagelist{{ref:{}}}{{{}}}\n\n'.format(key, count))
+
+def add_signature_block():
+  sys.stdout.write('\n\\addsignatureblock\n\n')
 
 if (__name__ == '__main__'):
   try:
@@ -443,4 +444,5 @@ if (__name__ == '__main__'):
     sys.exit(1)
 
   run_filter(input_path, bibliography_path, csl_path)
+  add_signature_block()
   add_table_of_authorities(bibliography_path, csl_path)

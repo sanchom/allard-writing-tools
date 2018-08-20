@@ -7,6 +7,7 @@ import re
 import shlex
 import subprocess
 import sys
+import yaml
 
 paragraph_markers = ['◊', '¶']
 
@@ -398,13 +399,29 @@ def run_filter(input_path, bibliography_path, csl_path):
 
   print_paragraph_notes(para_notes, citation_db, append_short_form)
 
+@functools.lru_cache(maxsize=None)
+def load_bibliography_yaml(bibliography_path):
+  y = yaml.load(open(bibliography_path, 'r').read())
+  return y
+
+def get_sort_key(ref_key, bibliography_path):
+  references = load_bibliography_yaml(bibliography_path)['references']
+  item = [item for item in references if item['id'] == ref_key.strip('@')]
+  item = item[0]
+  if item['type'] == 'legal_case':
+    return item['title'] + item['authority']
+  elif 'author' in item and 'family' in item['author']:
+    return item['author']['family']
+  else:
+    return item['title']
+
 def add_table_of_authorities(bibliography_path, csl_path):
   sys.stdout.write('\n\n\\newpage\n\n\\begin{center}\\underline{\\textsc{Table of Authorities}}\\end{center}\n\n')
   sys.stdout.write('\\hfill\\textsc{Pages}\n\n\\raggedright\n\n')
   # TODO: Actually look to the reference's .yaml content to grab the
   # case name (for legal cases), or author's family name (for books,
   # etc.), or title (otherwise).
-  for key, count in sorted(ref_counts.items(), key=lambda rec: get_long_form(rec[0], bibliography_path, csl_path).replace('_', '')):
+  for key, count in sorted(ref_counts.items(), key=lambda rec: get_sort_key(rec[0], bibliography_path)):
     long_form = get_long_form(key, bibliography_path, csl_path)
     long_form = re.sub(r'_(.*?)_', r'\\textit{\1}', long_form)
     sys.stdout.write('\\onehalfspacing {} \\mydotfill '.format(long_form))

@@ -8,7 +8,7 @@ linestretch: 2.0
 ¶ In addition to the requirement of an "actionable wrong" independent
 of the breach sued upon, punitive damages will only be awarded "where
 the defendant's misconduct is so malicious, oppressive and high-handed
-that it offends the court's sense of decency" [@hill, para. 196]. Such
+that it offends the court's sense of decency" [@hill, para. 196, Cory J]. Such
 behaviour has included defamation [@hill], failing to provide medical
 care [@robitaille], and exceptionally abusive behaviour by an
 insurance company [@whiten]. Here's another citation to _Robitaille_

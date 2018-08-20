@@ -15,7 +15,12 @@ usage = 'Usage: ./paranotes-filter.py input.md bibliography.yaml style.csl'
 pinpoint_terms = {'para': {'singular':'para.',
                            'plural':'paras.'},
                   'page': {'singular':'p.',
-                           'plural':'pp.'}}
+                           'plural':'pp.'},
+                  'section': {'singular':'s.',
+                              'plural':'ss.',
+                              'alternate':'sec.'}
+
+}
 
 ref_counts = collections.defaultdict(int)
 
@@ -95,6 +100,8 @@ def detect_pinpoint_type(pinpoint):
     return 'para'
   if pinpoint.count('p.'):
     return 'page'
+  if pinpoint.count('s.') or pinpoint.count('ss.') or pinpoint.count('sec.'):
+    return 'section'
   else:
     raise NotImplementedError('Pinpoint type not handled: {}'.format(pinpoint))
 
@@ -393,11 +400,14 @@ def run_filter(input_path, bibliography_path, csl_path):
 
 def add_table_of_authorities(bibliography_path, csl_path):
   sys.stdout.write('\n\n\\newpage\n\n\\begin{center}\\underline{\\textsc{Table of Authorities}}\\end{center}\n\n')
-  sys.stdout.write('\\textbf{Cases}\\hfill\\textbf{Pages}\n\n\\raggedright\n\n')
-  for key, count in ref_counts.items():
+  sys.stdout.write('\\hfill\\textsc{Pages}\n\n\\raggedright\n\n')
+  # TODO: Actually look to the reference's .yaml content to grab the
+  # case name (for legal cases), or author's family name (for books,
+  # etc.), or title (otherwise).
+  for key, count in sorted(ref_counts.items(), key=lambda rec: get_long_form(rec[0], bibliography_path, csl_path).replace('_', '')):
     long_form = get_long_form(key, bibliography_path, csl_path)
     long_form = re.sub(r'_(.*?)_', r'\\textit{\1}', long_form)
-    sys.stdout.write('{} \\mydotfill '.format(long_form))
+    sys.stdout.write('\\onehalfspacing {} \\mydotfill '.format(long_form))
     sys.stdout.write('\\pagelist{{ref:{}}}{{{}}}\n\n'.format(key, count))
 
 if (__name__ == '__main__'):

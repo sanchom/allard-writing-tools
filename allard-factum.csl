@@ -105,6 +105,17 @@
       </group>
     </group>
   </macro>
+  <macro name="render-legislation">
+    <group delimiter=" ">
+      <group delimiter=" " suffix=",">
+	<text macro="title"/>
+      </group>
+      <group delimiter=" ">
+	<text variable="authority"/>
+	<text macro="pinpoint"/>
+      </group>
+    </group>
+  </macro>
   <citation et-al-min="3" et-al-use-first="1">
     <layout delimiter="; ">
       <choose>
@@ -130,6 +141,9 @@
 	    <if type="legal_case">
 	      <text macro="render-case"/>
 	    </if>
+	    <else-if type="legislation">
+	      <text macro="render-legislation"/>
+	    </else-if>
 	    <else-if type="book">
 	      <group delimiter=", " suffix=" ">
 		<text macro="author"/>

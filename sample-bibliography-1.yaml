@@ -89,4 +89,10 @@ references:
   title: R v Ball
   title-short: Ball
   authority: '2011 BCCA 11'
+
+- id: car
+  type: legislation
+  title: Canadian Aviation Regulations
+  title-short: CARs
+  authority: 'SOR/96-433'
 ...

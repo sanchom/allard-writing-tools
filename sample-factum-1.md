@@ -131,7 +131,7 @@ often-nested nature of statutes and the large variety of label
 types. Within the special `custom_list` environment, labels are
 extracted and whitespace is used to infer the various nesting levels
 of sections, subsections, paragraphs, subparagraphs, etc. For example,
-this is Canadian Aviation Regulation 602.07 (3):
+this is {@car, sec. 602.07 (3)}:
 
 custom_list{
 (3)  The pilot-in-command of a VFR aircraft operating in Class B

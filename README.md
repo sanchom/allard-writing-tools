@@ -9,7 +9,18 @@ Document source      |  Result
 :-------------------------:|:-------------------------:
 [![What the text that you're writing will look like](examples/source1.png)](sample-factum-1.md)  |  [![Rendered PDF](examples/render1.png)](sample-factum-1.pdf)
 
-This system also generates a title page, table of contents, and table of authorities as required by the moot court.
+This system also generates a title page, table of contents, and table
+of authorities as required by the moot court.
+
+A lot of errors can creep in when you try to manually lay out
+citations, insert pinpoints, back-references, and create tables of
+authorities. This can all be automated. LaTex and BibTex have done
+this for decades for more standard citation formats. And, those
+solutions are certainly adequate for law journal articles with
+citations presented in standard footnotes. But, I haven't found
+something adequate for writing a factum in plain text that can then be
+converted to a nicely typeset PDF that matches the formatting
+requirements of UBC or the BC Court of Appeals.
 
 # Technical details
 
@@ -17,10 +28,10 @@ Dependencies include: LaTex (texlive), Pandoc, Python 3, probably
 more.
 
 This is a work in progress. I'll be adding citation types as I need
-them. Right now, it just barely works for legal cases and books. My
-python pre-processor for per-paragraph notes is a quick hack. I want
-that to be a proper Pandoc filter and I want to re-write it in Haskell
-or Racket.
+them. Right now, it only works for legal cases, legislation, and
+books. My python pre-processor for per-paragraph notes is a quick
+hack. I want that to be a proper Pandoc filter and I want to re-write
+it in Haskell or Racket.
 
 # For in-text citations
 

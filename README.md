@@ -3,6 +3,16 @@ think about formatting or citation layout while I'm writing. Those
 things should be automatic. These are some tools that I'm trying to
 use to get me there.
 
+# Examples
+
+Document source      |  Result
+:-------------------------:|:-------------------------:
+[![What the text that you're writing will look like](examples/source1.png)](sample-factum-1.md)  |  [![Rendered PDF](examples/render1.png)](sample-factum-1.pdf)
+
+This system also generates a title page, table of contents, and table of authorities as required by the moot court.
+
+# Technical details
+
 Dependencies include: LaTex (texlive), Pandoc, Python 3, probably
 more.
 

@@ -2,15 +2,15 @@
 numbersections: true
 linestretch: 2
 factum_title: true
-court: MOOT COURT OF THE GALE CUP
-appeal_from: THE SUPREME COURT OF CANADA
+court: SUPREME MOOT COURT OF THE UNIVERSITY OF BRITISH COLUMBIA
+appeal_from: The Supreme Court of Canada
 whose: APPELLANT
 appellant: CATHIE GAUTHIER
 respondent: HER MAJESTY THE QUEEN
 appellant_counsel_1: McCann, Sancho
 appellant_counsel_2: Other, Name
-respondent_counsel_1: Respondant, Counsel
-respondent_counsel_2: Another, Name
+respondent_counsel_1: Another, Name
+respondent_counsel_2: Final, Name
 ...
 
 # Attribution
@@ -18,7 +18,10 @@ respondent_counsel_2: Another, Name
 Except for this section, this document is an attempted reproduction of
 the factum at
 <http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/moots/sample_appellants_factum_0.pdf>. I'm
-using that content to test my custom authoring system.
+using that content to test my custom authoring system. Where this
+document varies from that sample, it is because I'm trying to conform
+more closely to the 2018 rules
+(<http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/moots/first-year-moot-court-rules-2018.pdf>).
 
 # Statement of Facts
 

@@ -268,15 +268,15 @@ $if(title)$
 $endif$
 $if(factum_title)$
 \begin{titlepage}
-\begin{centering}
+\hfill UBC Moot Court Registry
 
+\begin{center}
 \textbf{\Large IN THE $court$}
 
 $if(appeal_from)$
-(ON APPEAL FROM $appeal_from$)
+On appeal from $appeal_from$
 $endif$
-
-\end{centering}
+\end{center}
 
 BETWEEN:
 
@@ -308,11 +308,12 @@ $endif$
 
 \hfill RESPONDENT
 
-\vspace{10mm}
+\vspace{6mm}
 \hrule
 \centering\large \textbf{$whose$'S FACTUM}
-\vspace{3mm}
+\vspace{4mm}
 \hrule
+\vspace{5mm}
 
 \begin{minipage}{2.0in}
 \onehalfspacing

@@ -15,12 +15,17 @@ Document source      |  Result
 * [Bibliography file](https://github.com/sanchom/allard-writing-tools/blob/master/examples/gale_cup_reproduction/bibliography.yaml)
 * [Rendered PDF](https://github.com/sanchom/allard-writing-tools/blob/master/examples/gale_cup_reproduction/factum.pdf)
 
-This system also generates a title page, table of contents, and table
-of authorities as required by the moot court.
+# What this does
 
 A lot of errors can creep in when you try to manually lay out
-citations, insert pinpoints, back-references, and create tables of
-authorities. This can all be automated. LaTex and BibTex have done
+citations, insert pinpoints, manage back-references, and create tables of
+authorities.
+
+For example, in the sample factum, I found a reference that wasn't included in the
+table of authorities, inconsistent use of hyphens, en-dashes, and em-dashes, inconsistent
+citation layout, and typos in back-references.
+
+Fortunately, this can all be automated. LaTex and BibTex have done
 this for decades for more standard citation formats. And, those
 solutions are certainly adequate for law journal articles with
 citations presented in standard footnotes. But, I haven't found

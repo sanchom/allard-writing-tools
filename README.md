@@ -1,13 +1,30 @@
-I want to write in as close to plain text as possible. I don't want to
-think about formatting or citation layout while I'm writing. Those
-things should be automatic. These are some tools that I'm trying to
-use to get me there.
-
 # Example
+### Source
 
-Document source      |  Result
-:-------------------------:|:-------------------------:
-[![What the text that you're writing will look like](examples/source1.png)](examples/source1.png)  |  [![Rendered PDF](examples/render1.png)](examples/render1.png)
+```
+# Heading
+
+¶ In addition to the requirement of an "actionable wrong" independent
+of the breach sued upon, punitive damages will only be awarded "where
+the defendant's misconduct is so malicious, oppressive and high-handed
+that it offends the court's sense of decency" [@hill, para. 196, Cory J]. Such
+behaviour has included defamation [@hill], failing to provide medical
+care [@robitaille], and exceptionally abusive behaviour by an
+insurance company [@whiten]. Here's another citation to _Robitaille_
+with a pinpoint (the first didn't have one) [@robitaille, para. 23].
+
+¶ Since the primary vehicle of punishment is the criminal law,
+punitive damages should be scarcely used [@whiten, para. 69]. It is
+also important to underline that there cannot be joint and several
+responsibility for punitive damages because they arise from the
+misconduct of the particular defendant against whom they are awarded.
+
+[@hill, para. 195]
+```
+
+### Rendered PDF
+
+<img width="400" alt="Rendered PDF" src="examples/render1.png" />
 
 # Another example
 
@@ -33,8 +50,11 @@ something adequate for writing a factum in plain text that can then be
 converted to a nicely typeset PDF that matches the formatting
 requirements of UBC or the BC Court of Appeals.
 
-These tools try to replicate the formatting from the guidance and
-examples listed here, in roughly the priority listed. That is, if
+I want to write in as close to plain text as possible, and I don't want to
+think about formatting or citation layout while I'm writing. These are some
+tools that I'm trying to use to get me there.
+
+I've tried to adhere to the guidance and examples listed here, in roughly the priority listed. That is, if
 there is any conflicting guidance, I follow requirements of the
 higher-listed guide, but will look to lower-listed guides when a
 higher-listed guide leaves something ambiguous.

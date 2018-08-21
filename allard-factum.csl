@@ -50,6 +50,16 @@
   <macro name="title">
     <text variable="title" font-style="italic"/>
   </macro>
+  <macro name="title-short">
+    <choose>
+      <if variable="title-short">
+	<text variable="title-short"/>
+      </if>
+      <else>
+	<text variable="title"/>
+      </else>
+    </choose>
+  </macro>
   <macro name="publisher info">
     <text value="(" />
     <choose>
@@ -121,14 +131,14 @@
       <choose>
 	<if position="ibid subsequent" match="any">
 	  <choose>
-	    <if type="legal_case">
+	    <if type="legal_case legislation" match="any">
 	      <group delimiter=" ">
-		<text variable="title-short" font-style="italic"/>
+		<text macro="title-short" font-style="italic"/>
 		<text macro="pinpoint"/>
 	      </group>
 	    </if>
 	    <else>
-	      <!-- Everything other than a legal case -->
+	      <!-- Everything other than a legal case and legislation-->
 	      <group delimiter=" ">
 		<text variable="author" form="short" font-style="italic"/>
 		<text macro="pinpoint"/>

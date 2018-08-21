@@ -411,8 +411,8 @@ def get_sort_key(ref_key, bibliography_path):
   item = item[0]
   if item['type'] == 'legal_case':
     return item['title'] + item['authority']
-  elif 'author' in item and 'family' in item['author']:
-    return item['author']['family']
+  elif 'author' in item and 'family' in item['author'][0]:
+    return item['author'][0]['family']
   else:
     return item['title']
 

@@ -3,7 +3,13 @@ fontfamily: charter
 linestretch: 2.0
 ...
 
-# A heading
+# Attribution
+
+¶ This document just demonstrates the range of citations and
+formatting that this system supports. Some of the text is taken from
+<http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/first%20year/factum_citation_guide.pdf>.
+
+# Heading
 
 ¶ In addition to the requirement of an "actionable wrong" independent
 of the breach sued upon, punitive damages will only be awarded "where

@@ -1,13 +1,191 @@
 ---
 references:
+- id: criminal-code
+  type: legislation
+  title: 'Criminal Code'
+  authority: 'R.S.C. 1985, c C-46'
+
 - id: gauthier-scc
   type: legal_case
   title: 'R v Gauthier'
   title-short: 'Gauthier SCC'
   authority: '2013 SCC 32'
+
 - id: gauthier-ca
   type: legal_case
   title: 'R v Gauthier'
   title-short: 'Gauthier CA'
   authority: '2011 QCCA 1395'
+
+- id: fournier
+  type: legal_case
+  title: 'Fournier v R'
+  title-short: 'Fournier'
+  authority: '2002 NBCA 71'
+
+- id: morgan
+  type: legal_case
+  title: 'R v Morgan'
+  title-short: Morgan
+  authority: '[1993] OJ No 653 (Ont CA)'
+
+- id: oflaherty
+  type: legal_case
+  title: "R v O'Flaherty"
+  title-short: "O'Flaherty"
+  authority: '[2004] EWCA Crim 526 (BAILII)'
+
+- id: bird-scc
+  type: legal_case
+  title: R v Bird
+  title-short: Bird-SCC
+  authority: '2009 SCC 60'
+
+- id: bird-ca
+  type: legal_case
+  title: R v Bird
+  title-short: Bird-CA
+  authority: '2009 ABCA 45'
+
+- id: ball
+  type: legal_case
+  title: R v Ball
+  title-short: Ball
+  authority: '2011 BCCA 11'
+
+- id: thatcher
+  type: legal_case
+  title: R v Thatcher
+  title-short: Thatcher
+  authority: '[1987] 1 SCR 652'
+
+- id: rose
+  type: book
+  author:
+  - family: Rose
+    given: V Gordon
+  title: 'Parties to an Offence'
+  publisher: Carswell
+  publisher-place: Toronto
+  original-date:
+  - year: 1982
+
+- id: stuart
+  type: book
+  author:
+  - family: Stuart
+    given: Don
+  title: 'Canadian Criminal Law: a Treatise'
+  publisher: Carswell
+  publisher-place: Scarborough
+  original-date:
+  - year: 2011
+
+- id: manson
+  type: article-journal
+  author:
+  - family: Manson
+    given: Allan
+  title: 'Recodifying Attempts, Parties and Abandoned Intentions'
+  original-date:
+  - year: 1989
+  container-title: "Queen's Law Journal"
+  container-title-short: "Queen's LJ"
+  volume: 14
+  page-first: 85
+
+- id: whitehouse
+  type: legal_case
+  title: R v Whitehouse
+  title-short: Whitehouse
+  authority: '[1940] BCJ No 46 (CA)'
+
+- id: kirkness
+  type: legal_case
+  title: R v Kirkness
+  title-short: Kirkness
+  authority: '[1990] 3 SCR 74'
+
+- id: miller
+  type: legal_case
+  title: R v Miller
+  title-short: Miller
+  authority: '[1976] SCJ No 91'
+
+- id: henderson
+  type: legal_case
+  title: Henderson v The King
+  short-title: Henderson
+  authority: '[1948] SCR 226'
+
+- id: otway
+  type: legal_case
+  title: Otway v R
+  short-title: Otway
+  authority: '[2011] EWCA Crim 3 (BAILII)'
+
+- id: pk
+  type: legal_case
+  title: R v PK
+  short-title: PK
+  authority: 2005 ABPC 10
+
+- id: khan
+  type: legal_case
+  title: R v Khan
+  short-title: Khan
+  authority: 2001 SCC 86
+
+- id: croxford
+  type: legal_case
+  title: R v Croxford
+  short-title: Croxford
+  authority: '[2011] VSCA 433 (AustLII)'
+
+- id: leslie
+  type: legal_case
+  title: R v Leslie
+  short-title: Leslie
+  authority: 2012 BCSC 683
+
+- id: duong
+  type: legal_case
+  title: R v Duong
+  short-title: Duong
+  authority: '[2011] SASCFC 100 (AustLII)'
+
+- id: huynh
+  type: legal_case
+  title: Huynh v The Queen
+  short-title: Huynh
+  authority: '[2013] HCA 6 (AustLII)'
+
+- id: cinous
+  type: legal_case
+  title: R v Cinous
+  short-title: Cinous
+  authority: 2002 SCC 29
+
+- id: white
+  type: legal_case
+  title: White v Ridley
+  short-title: White
+  authority: '[1978] HCA 38 (AustLII)'
+
+- id: dineley
+  type: legal_case
+  title: R v Dineley
+  short-title: Dineley
+  authority: 2012 SCC 58
+
+- id: bernard
+  type: legal_case
+  title: R v Bernard
+  short-title: Bernard
+  authority: '[1988] 2 SCR 833'
+
+- id: charter
+  type: legislation
+  title: 'Canadian Charter of Rights and Freedoms'
+  authority: 'Part 1 of the Constitution Act, 1982, being Schedule B to the Canada Act 1982 (UK), c 11'
 ...

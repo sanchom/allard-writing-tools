@@ -22,6 +22,22 @@ something adequate for writing a factum in plain text that can then be
 converted to a nicely typeset PDF that matches the formatting
 requirements of UBC or the BC Court of Appeals.
 
+These tools try to replicate the formatting from the guidance and
+examples listed here, in roughly the priority listed. That is, if
+there is any conflicting guidance, I follow requirements of the
+higher-listed guide, but will look to lower-listed guides when a
+higher-listed guide leaves something ambiguous.
+
+1. http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/moots/first-year-moot-court-rules-2018.pdf
+2. http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/first%20year/factum_citation_guide.pdf
+3. http://guides.library.ubc.ca/legalcitation
+4. http://www.bclaws.ca/Recon/document/ID/freeside/297_2001a
+5. https://www.courts.gov.bc.ca/Court_of_Appeal/practice_and_procedure/Forms/Checklist_Court_of_Appeal_Factums.pdf
+6. https://store.thomsonreuters.ca/product-detail/canadian-guide-to-uniform-legal-citation-9th-edition-manuel-canadien-de-la-reference-juridique-9e-edition-mcgill-guide-hc-print/
+7. https://www.chicagomanualofstyle.org/home.html
+8. http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/moots/sample_appellants_factum_0.pdf
+9. http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/moots/sample_respondents_factum_0.pdf
+
 # Technical details
 
 Dependencies include: LaTex (texlive), Pandoc, Python 3, probably
@@ -32,30 +48,6 @@ them. Right now, it only works for legal cases, legislation, and
 books. My python pre-processor for per-paragraph notes is a quick
 hack. I want that to be a proper Pandoc filter and I want to re-write
 it in Haskell or Racket.
-
-# For in-text citations
-
-Like in the example here: https://guides.library.ubc.ca/legalcitation/intext
-
-`pandoc sample-intext.md --bibliography sample-bibliography-1.yaml --csl allard-factum.csl -t plain`
-
-or
-
-`pandoc sample-intext.md --bibliography sample-bibliography-1.yaml --csl allard-factum.csl -o sample-intext.pdf`
-
-# For factum style
-
-These tools try to replicate the formating from the guidance and examples here:
-
-- http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/first%20year/factum_citation_guide.pdf
-- http://www.allard.ubc.ca/sites/www.allard.ubc.ca/files/uploads/moots/sample_appellants_factum_0.pdf
-
-This is more complicated and can't be handled with Pandoc and CSL
-alone (LaTeX/Bibtex doesn't do this either). So, I need to do some
-custom pre-processing. I use CSL to generate the layout of a citation,
-but my custom pre-processor puts that content into the appropriate
-place for Pandoc. (This should really be done by a transformation
-langauge that has a proper parser, tokenizer, etc.)
 
 When writing markdown for this style, you need to use paragraph
 markings (¶, or ◊). This is the only way the pre-processor can know where to

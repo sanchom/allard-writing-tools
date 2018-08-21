@@ -5,12 +5,20 @@ factum_title: true
 court: SUPREME MOOT COURT OF THE UNIVERSITY OF BRITISH COLUMBIA
 appeal_from: The Supreme Court of Canada
 whose: APPELLANT
-appellant: CATHIE GAUTHIER
-respondent: HER MAJESTY THE QUEEN
-appellant_counsel_1: McCann, Sancho
-appellant_counsel_2: Other, Name
-respondent_counsel_1: Another, Name
-respondent_counsel_2: Final, Name
+appellant_name: CATHIE GAUTHIER
+respondent_name: HER MAJESTY THE QUEEN
+appellant_counsel:
+- family_name: McCann
+  first_name: Sancho
+- family_name: Other
+  first_name: Name
+respondent_counsel:
+- family_name: Another
+  first_name: Person
+- family_name: Random
+  first_name: Counsel
+appellant: true
+respondent: false
 ...
 
 # Attribution

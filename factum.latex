@@ -245,25 +245,37 @@ $endif$
 \def\addsignatureblock{
 \begin{center}\textsc{All of Which is Respectfully Submitted.}\end{center}
 \vspace{1cm}
+
+$if(appellant)$
+$for(appellant_counsel)$
 \begin{minipage}{0.4\textwidth}
 \onehalfspacing
 \hrule
 \vspace{2mm}
 
-$appellant_counsel_1$
+$appellant_counsel.family_name$, $appellant_counsel.first_name$
 
 Counsel for the appellant
 \end{minipage}
 \hfill
+$endfor$
+$endif$
+
+$if(respondent)$
+$for(respondent_counsel)$
 \begin{minipage}{0.4\textwidth}
 \onehalfspacing
 \hrule
 \vspace{2mm}
 
-$appellant_counsel_2$
+$respondent_counsel.family_name$, $respondent_counsel.first_name$
 
-Counsel for the appellant
+Counsel for the respondent
 \end{minipage}
+\hfill
+$endfor$
+$endif$
+
 }
 
 $for(header-includes)$
@@ -304,9 +316,9 @@ $endif$
 
 BETWEEN:
 
-$if(appellant)$
+$if(appellant_name)$
 \begin{center}
-\textbf{\large{$appellant$}}
+\textbf{\large{$appellant_name$}}
 \end{center}
 $else$
 \begin{center}
@@ -319,9 +331,9 @@ $endif$
 AND:
 
 
-$if(respondent)$
+$if(respondent_name)$
 \begin{center}
-\textbf{\large{$respondent$}}
+\textbf{\large{$respondent_name$}}
 \end{center}
 $else$
 \begin{center}
@@ -334,20 +346,17 @@ $endif$
 
 \vspace{6mm}
 \hrule
-\centering\large \textbf{$whose$'S FACTUM}
+\centering\large \textbf{$if(respondent)$RESPONDENT$endif$$if(appellant)$APPELLANT$endif$'S FACTUM}
 \vspace{4mm}
 \hrule
 \vspace{5mm}
 
 \begin{minipage}{2.0in}
 \onehalfspacing
-$if(appellant_counsel_1)$
-$appellant_counsel_1$
-$endif$
+$for(appellant_counsel)$
+$appellant_counsel.family_name$, $appellant_counsel.first_name$
 
-$if(appellant_counsel_2)$
-$appellant_counsel_2$
-$endif$
+$endfor$
 
 
 \vspace{1cm}
@@ -357,13 +366,11 @@ Counsel for the Appellant
 \hfill
 \begin{minipage}{2.0in}
 \onehalfspacing
-$if(respondent_counsel_1)$
-$respondent_counsel_1$
-$endif$
+$for(respondent_counsel)$
+$respondent_counsel.family_name$, $respondent_counsel.first_name$
 
-$if(respondent_counsel_2)$
-$respondent_counsel_2$
-$endif$
+$endfor$
+
 
 \vspace{1cm}
 

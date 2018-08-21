@@ -111,6 +111,7 @@ def extract_pinpoint_value(pinpoint):
   pinpoint_value = pinpoint
   for term in sorted(terms_to_strip.values(), key=lambda s: len(s), reverse=True):
     pinpoint_value = pinpoint_value.replace(term, '', 1).strip()
+  pinpoint_value = re.sub(r'([0-9])-([0-9])', r'\1--\2', pinpoint_value)
   return pinpoint_value
 
 def get_term(pinpoint_type, plural, include_dot):
@@ -255,15 +256,17 @@ def special_preprocessing(raw_source):
     raw_source = raw_source.replace(r, '<custom_list_{}>'.format(i))
   if header:
     raw_source = raw_source.replace(header.group(0), '<header>')
-  paragraphed = re.sub(r'(.)\n(.)', r'\1 \2', raw_source)
+  # Ignoring all single newlines.
+  # TODO: Make this robust to windows newlines.
+  transformed = re.sub(r'(.)\n(.)', r'\1 \2', raw_source)
   # Reattaching the header
   if header:
-    paragraphed = re.sub(r'\<header\>', header.group(0), paragraphed)
+    transformed = re.sub(r'\<header\>', header.group(0), transformed)
   for i, r in enumerate(preformatted_regions):
-    paragraphed = paragraphed.replace('<preformatted_{}>'.format(i), r)
+    transformed = transformed.replace('<preformatted_{}>'.format(i), r)
   for i, r in enumerate(custom_lists):
-    paragraphed = paragraphed.replace('<custom_list_{}>'.format(i), transform_custom_list(r))
-  return paragraphed
+    transformed = transformed.replace('<custom_list_{}>'.format(i), transform_custom_list(r))
+  return transformed
 
 def bracket_lists(raw_source):
   # Looking for newline, whitespace, then roman numeral then two spaces.
@@ -276,7 +279,7 @@ def run_filter(input_path, bibliography_path, csl_path):
 
   raw_source = open(input_path, 'r', encoding='utf-8').read()
 
-  paragraphed_source = special_preprocessing(raw_source)
+  transformed_source = special_preprocessing(raw_source)
 
   para_number = 0
   possibly_in_a_citation = False
@@ -285,7 +288,7 @@ def run_filter(input_path, bibliography_path, csl_path):
   in_an_inline_citation = False
   para_notes = {}
   explicit_paragraph_note = True
-  for char in paragraphed_source:
+  for char in transformed_source:
     if char == '\n' and not possibly_in_a_citation:
       explicit_paragraph_note = True
     elif char != ' ' and char != '[' and not possibly_in_a_citation:
@@ -417,8 +420,9 @@ def get_sort_key(ref_key, bibliography_path):
     return item['title']
 
 def add_table_of_authorities(bibliography_path, csl_path):
-  sys.stdout.write('\n\n\\newpage\n\n\\begin{center}\\underline{\\textsc{Table of Authorities}}\\end{center}\n\n')
+  sys.stdout.write('\n\n\\newpage\n\n\\pagenumbering{gobble}\n\\begin{center}\\underline{\\textsc{Table of Authorities}}\\end{center}\n\n')
   sys.stdout.write('\\hfill\\textsc{Pages}\n\n\\raggedright\n\n')
+  sys.stdout.write('\\setlength{\\parskip}{0.25em}\n\n')
   for key, count in sorted(ref_counts.items(), key=lambda rec: get_sort_key(rec[0], bibliography_path)):
     long_form = get_long_form(key, bibliography_path, csl_path)
     long_form = re.sub(r'_(.*?)_', r'\\textit{\1}', long_form)

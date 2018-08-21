@@ -1,6 +1,7 @@
 ---
 numbersections: true
 linestretch: 2
+fullpage: true
 factum_title: true
 court: SUPREME MOOT COURT OF THE UNIVERSITY OF BRITISH COLUMBIA
 appeal_from: The Supreme Court of Canada
@@ -8,8 +9,8 @@ whose: APPELLANT
 appellant_name: CATHIE GAUTHIER
 respondent_name: HER MAJESTY THE QUEEN
 appellant_counsel:
-- family_name: McCann
-  first_name: Sancho
+- family_name: My
+  first_name: Name
 - family_name: Other
   first_name: Name
 respondent_counsel:
@@ -488,7 +489,7 @@ eliminating the common law "_Carter_ defence" could not have
 retrospective effect: "The fact that new legislation _has an effect on
 the content or existence of a defence_ ... is an indication that
 substantive rights are affected. I cannot accept the approach
-. . . according to which legislation that _alters the evidentiary
+... according to which legislation that _alters the evidentiary
 content of a defence_ applies retrospectively."
 
 [@bernard, para. 55 (emphasis added)]

@@ -60,6 +60,16 @@
       </else>
     </choose>
   </macro>
+  <macro name="journal-name">
+    <choose>
+      <if variable="container-title-short">
+	<text variable="container-title-short"/>
+      </if>
+      <else>
+	<text variable="container-title"/>
+      </else>
+    </choose>
+  </macro>
   <macro name="publisher info">
     <text value="(" />
     <choose>
@@ -78,6 +88,11 @@
       <date-part name="year"/>
     </date>
     <text value=")"/>
+  </macro>
+  <macro name="year">
+    <date variable="original-date">
+      <date-part name="year"/>
+    </date>
   </macro>
   <macro name="pinpoint">
     <group delimiter=" ">
@@ -162,9 +177,20 @@
 	      <text macro="publisher info"/>
 	      <text macro="pinpoint" prefix=" "/>
 	    </else-if>
-	    <else-if type="article">
-	      <text value="--article citation not implemented--"/>
+	    <else-if type="article-journal">
+	      <group delimiter=", " suffix=" ">
+		<text macro="author"/>
+		<text macro="title"/>
+	      </group>
+	      <text macro="year" prefix="(" suffix=") "/>
+	      <text variable="volume"/>
+	      <text variable="issue" prefix=":"/>
+	      <text macro="journal-name" prefix=" "/>
+	      <text variable="page-first" prefix=" "/>
 	    </else-if>
+	    <else>
+	      <text value="--citation type not implemented--"/>
+	    </else>
 	  </choose>
 	</else>
       </choose>

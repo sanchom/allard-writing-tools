@@ -3,11 +3,17 @@ think about formatting or citation layout while I'm writing. Those
 things should be automatic. These are some tools that I'm trying to
 use to get me there.
 
-# Examples
+# Example
 
 Document source      |  Result
 :-------------------------:|:-------------------------:
-[![What the text that you're writing will look like](examples/source1.png)](sample-factum-1.md)  |  [![Rendered PDF](examples/render1.png)](sample-factum-1.pdf)
+[![What the text that you're writing will look like](examples/source1.png)](examples/source1.png)  |  [![Rendered PDF](examples/render1.png)](examples/render1.png)
+
+# Another example
+
+* [Source text](https://raw.githubusercontent.com/sanchom/allard-writing-tools/master/examples/gale_cup_reproduction/source.md)
+* [Bibliography file](https://github.com/sanchom/allard-writing-tools/blob/master/examples/gale_cup_reproduction/bibliography.yaml)
+* [Rendered PDF](https://github.com/sanchom/allard-writing-tools/blob/master/examples/gale_cup_reproduction/factum.pdf)
 
 This system also generates a title page, table of contents, and table
 of authorities as required by the moot court.

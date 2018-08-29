@@ -105,6 +105,11 @@ def detect_pinpoint_type(pinpoint):
   else:
     raise NotImplementedError('Pinpoint type not handled: {}'.format(pinpoint))
 
+def detect_explicit_plural(pinpoint):
+  if pinpoint.count('paras') or pinpoint.count('pp') or pinpoint.count('ss') or pinpoint.count('secs'):
+    return True
+  return False
+
 def extract_pinpoint_value(pinpoint):
   pinpoint_type = detect_pinpoint_type(pinpoint)
   terms_to_strip = pinpoint_terms[pinpoint_type]
@@ -126,13 +131,19 @@ def get_term(pinpoint_type, plural, include_dot):
 def render_note(key, content, citation_db, append_short_form):
   ref_counts[key] += 1
   count = ref_counts[key]
+  try:
+    explicit_plural = content['pinpoints']['explicit_plural']
+  except KeyError:
+    explicit_plural = False
   sys.stdout.write('\n\\label{{ref:{}-{}}}\n'.format(key, count))
   if 'supra' in content:
     sys.stdout.write('{}, _supra_ para {}'.format(citation_db[key]['short_form'], citation_db[key]['original_paragraph']))
   else:
     sys.stdout.write('[{}'.format(key))
   for pinpoint_type, pinpoint_list in content['pinpoints'].items():
-    plural = (len(pinpoint_list) > 1 or is_range(pinpoint_list[0]))
+    if (pinpoint_type == 'explicit_plural'):
+      continue
+    plural = (len(pinpoint_list) > 1 or is_range(pinpoint_list[0]) or explicit_plural)
     if 'supra' in content:
       # No period for pinpoint signal in supra context.
       sys.stdout.write(' at {} '.format(get_term(pinpoint_type, plural, False)))
@@ -324,10 +335,14 @@ def run_filter(input_path, bibliography_path, csl_path):
       if citation_key not in para_notes:
         para_notes[citation_key] = {'pinpoints':{}}
       if (citation_pinpoint):
+        explicit_plural = detect_explicit_plural(citation_pinpoint)
         pinpoint_type = detect_pinpoint_type(citation_pinpoint)
         pinpoint_value = extract_pinpoint_value(citation_pinpoint)
         if pinpoint_type not in para_notes[citation_key]['pinpoints']:
           para_notes[citation_key]['pinpoints'][pinpoint_type] = []
+          para_notes[citation_key]['pinpoints']['explicit_plural'] = False
+        if explicit_plural:
+          para_notes[citation_key]['pinpoints']['explicit_plural'] = True
         para_notes[citation_key]['pinpoints'][pinpoint_type].append(pinpoint_value)
       if citation_key not in citation_db:
         # This is the first mention. Track the paragraph number. We'll
@@ -373,10 +388,14 @@ def run_filter(input_path, bibliography_path, csl_path):
       if citation_key not in inline_note:
         inline_note[citation_key] = {'pinpoints':{}}
       if (citation_pinpoint):
+        explicit_plural = detect_explicit_plural(citation_pinpoint)
         pinpoint_type = detect_pinpoint_type(citation_pinpoint)
         pinpoint_value = extract_pinpoint_value(citation_pinpoint)
         if pinpoint_type not in inline_note[citation_key]['pinpoints']:
           inline_note[citation_key]['pinpoints'][pinpoint_type] = []
+          inline_note[citation_key]['pinpoints']['explicit_plural'] = False
+        if explicit_plural:
+          inline_note[citation_key]['pinpoints']['explicit_plural'] = True
         inline_note[citation_key]['pinpoints'][pinpoint_type].append(pinpoint_value)
       if citation_key not in citation_db:
         # This is the first mention. Track the paragraph number. We'll

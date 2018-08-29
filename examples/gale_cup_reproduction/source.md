@@ -5,7 +5,6 @@ fullpage: true
 factum_title: true
 court: SUPREME MOOT COURT OF THE UNIVERSITY OF BRITISH COLUMBIA
 appeal_from: The Supreme Court of Canada
-whose: APPELLANT
 appellant_name: CATHIE GAUTHIER
 respondent_name: HER MAJESTY THE QUEEN
 appellant_counsel:

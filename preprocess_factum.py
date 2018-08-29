@@ -17,8 +17,8 @@ pinpoint_terms = {'para': {'singular':'para.',
                            'plural':'paras.'},
                   'page': {'singular':'p.',
                            'plural':'pp.'},
-                  'section': {'singular':'s.',
-                              'plural':'ss.',
+                  'section': {'singular':'s',
+                              'plural':'ss',
                               'alternate':'sec.'}
 }
 
@@ -115,6 +115,8 @@ def extract_pinpoint_value(pinpoint):
   terms_to_strip = pinpoint_terms[pinpoint_type]
   pinpoint_value = pinpoint
   for term in sorted(terms_to_strip.values(), key=lambda s: len(s), reverse=True):
+    if pinpoint_value[-1] != '.':
+      pinpoint_value = pinpoint_value.replace(term + '.', '', 1).strip()
     pinpoint_value = pinpoint_value.replace(term, '', 1).strip()
   pinpoint_value = re.sub(r'([0-9])-([0-9])', r'\1--\2', pinpoint_value)
   return pinpoint_value
@@ -146,14 +148,22 @@ def render_note(key, content, citation_db, append_short_form):
     plural = (len(pinpoint_list) > 1 or is_range(pinpoint_list[0]) or explicit_plural)
     if 'supra' in content:
       # No period for pinpoint signal in supra context.
-      sys.stdout.write(' at {} '.format(get_term(pinpoint_type, plural, False)))
+      if pinpoint_type == 'para':
+        sys.stdout.write(' at {} '.format(get_term(pinpoint_type, plural, False)))
+      elif pinpoint_type == 'page':
+        sys.stdout.write(' at ')
+      elif pinpoint_type == 'section':
+        sys.stdout.write(', {} '.format(get_term(pinpoint_type, plural, False)))
       for pinpoint in pinpoint_list[:-1]:
         sys.stdout.write('{}, '.format(pinpoint))
       sys.stdout.write('{}'.format(pinpoint_list[-1]))
     else:
       # Period needed in the pinpoint signal here for Pandoc to
       # render the full note with proper pinpointing.
-      sys.stdout.write(' {} '.format(get_term(pinpoint_type, plural, True)))
+      if pinpoint_type != 'section':
+        sys.stdout.write(' {} '.format(get_term(pinpoint_type, plural, True)))
+      else:
+        sys.stdout.write(', {} '.format(get_term(pinpoint_type, plural, False)))
       for pinpoint in pinpoint_list[:-1]:
         sys.stdout.write('{}, '.format(pinpoint))
       sys.stdout.write('{}'.format(pinpoint_list[-1]))

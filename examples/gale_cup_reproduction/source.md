@@ -133,8 +133,12 @@ Appellant.
 
 ## Argument
 
-◊ It is well settled that the interpretation of a defence and whether there is an air of reality to support it being considered by a jury are both questions of law, reviewable on a standard of correctness. In concluding that the defence of abandonment lacked an air of reality and refusing to grant the appellant a new trial, the majority of the Supreme Court
-of Canada erred in three respects:
+◊ It is well settled that the interpretation of a defence and whether
+there is an air of reality to support it being considered by a jury
+are both questions of law, reviewable on a standard of correctness. In
+concluding that the defence of abandonment lacked an air of reality
+and refusing to grant the appellant a new trial, the majority of the
+Supreme Court of Canada erred in three respects:
 
 I.  by adding a new element to the defence of abandonment;
 
@@ -239,12 +243,12 @@ alone."
 since _R v Whitehouse_, is a change of intention and timely and
 unequivocal notice of withdrawal. That is, the accused must clearly
 communicate to the principal "that if he proceeds upon it he does so
-without the _further_ aid and assistance of those who withdraw." (emphasis added) This
-passage makes clear that the defence of abandonment is designed to
-sever criminal liability despite prior assistance, as long as
-withdrawal occurs while there is still time for the principal to avoid
-the offence as well. If this is done, the party’s prior assistance
-becomes legally irrelevant.
+without the _further_ aid and assistance of those who withdraw."
+(emphasis added) This passage makes clear that the defence of
+abandonment is designed to sever criminal liability despite prior
+assistance, as long as withdrawal occurs while there is still time for
+the principal to avoid the offence as well. If this is done, the
+party’s prior assistance becomes legally irrelevant.
 
 [@whitehouse, p. 425]
 [@gauthier-scc, para. 78]

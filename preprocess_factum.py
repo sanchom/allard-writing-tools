@@ -2,6 +2,7 @@
 
 import collections
 import functools
+import io
 import os
 import re
 import shlex
@@ -11,7 +12,7 @@ import yaml
 
 paragraph_markers = ['◊', '¶']
 
-usage = 'Usage: ./paranotes-filter.py input.md bibliography.yaml style.csl'
+usage = 'Usage: ./paranotes-filter.py input.md csl_bibliography.yaml style.csl custom_bibliography.yaml'
 
 pinpoint_terms = {'para': {'singular':'para.',
                            'plural':'paras.'},
@@ -130,7 +131,8 @@ def get_term(pinpoint_type, plural, include_dot):
   except:
     raise NotImplementedError('Cannot get term for pinpoint type: {}'.format(pinpoint_type))
 
-def render_note(key, content, citation_db, append_short_form):
+def render_note(key, content, citation_db, custom_bibliography_path, append_short_form):
+  custom_note = None
   ref_counts[key] += 1
   count = ref_counts[key]
   try:
@@ -141,7 +143,17 @@ def render_note(key, content, citation_db, append_short_form):
   if 'supra' in content:
     sys.stdout.write('{}, _supra_ para {}'.format(citation_db[key]['short_form'], citation_db[key]['original_paragraph']))
   else:
-    sys.stdout.write('[{}'.format(key))
+    # If this key calls for a custom citation, render it directly
+    # instead of deferring to CSL through an @form.
+    if custom_bibliography_path:
+      custom_bib = load_bibliography_yaml(custom_bibliography_path)
+      references = custom_bib['references']
+      item = [item for item in references if item['id'] == key.strip('@')]
+      if item:
+        custom_note = item[0]['custom_format']
+    if not custom_note:
+      sys.stdout.write('[{}'.format(key))
+  pinpoint_text = io.StringIO()
   for pinpoint_type, pinpoint_list in content['pinpoints'].items():
     if (pinpoint_type == 'explicit_plural'):
       continue
@@ -149,30 +161,39 @@ def render_note(key, content, citation_db, append_short_form):
     if 'supra' in content:
       # No period for pinpoint signal in supra context.
       if pinpoint_type == 'para':
-        sys.stdout.write(' at {} '.format(get_term(pinpoint_type, plural, False)))
+        pinpoint_text.write(' at {} '.format(get_term(pinpoint_type, plural, False)))
       elif pinpoint_type == 'page':
-        sys.stdout.write(' at ')
+        pinpoint_text.write(' at ')
       elif pinpoint_type == 'section':
-        sys.stdout.write(', {} '.format(get_term(pinpoint_type, plural, False)))
+        pinpoint_text.write(', {} '.format(get_term(pinpoint_type, plural, False)))
       for pinpoint in pinpoint_list[:-1]:
-        sys.stdout.write('{}, '.format(pinpoint))
-      sys.stdout.write('{}'.format(pinpoint_list[-1]))
+        pinpoint_text.write('{}, '.format(pinpoint))
+      pinpoint_text.write('{}'.format(pinpoint_list[-1]))
     else:
       # Period needed in the pinpoint signal here for Pandoc to
       # render the full note with proper pinpointing.
       if pinpoint_type != 'section':
-        sys.stdout.write(' {} '.format(get_term(pinpoint_type, plural, True)))
+        pinpoint_text.write(' {} '.format(get_term(pinpoint_type, plural, True)))
       else:
-        sys.stdout.write(', {} '.format(get_term(pinpoint_type, plural, False)))
+        pinpoint_text.write(', {} '.format(get_term(pinpoint_type, plural, False)))
       for pinpoint in pinpoint_list[:-1]:
-        sys.stdout.write('{}, '.format(pinpoint))
-      sys.stdout.write('{}'.format(pinpoint_list[-1]))
+        pinpoint_text.write('{}, '.format(pinpoint))
+      pinpoint_text.write('{}'.format(pinpoint_list[-1]))
+  if not custom_note:
+    sys.stdout.write(pinpoint_text.getvalue())
+  else:
+    if len(pinpoint_text.getvalue()):
+      pinpoint_text.write(',')
+      sys.stdout.write(custom_note.replace(', <pinpoint>', pinpoint_text.getvalue()))
+    else:
+      sys.stdout.write(custom_note.replace('<pinpoint>', ''))
   if not 'supra' in content:
-    sys.stdout.write(']')
+    if not custom_note:
+      sys.stdout.write(']')
     if key in append_short_form:
       sys.stdout.write(' [{}]'.format(citation_db[key]['short_form']))
 
-def print_paragraph_notes(para_notes, citation_db, append_short_form):
+def print_paragraph_notes(para_notes, citation_db, custom_bibliography_path, append_short_form):
   if para_notes.items():
     sys.stdout.write('\n')
     sys.stdout.write('\\setlength{\\originalparskip}{\\parskip}\n')
@@ -182,7 +203,7 @@ def print_paragraph_notes(para_notes, citation_db, append_short_form):
   for note_id, (key, content) in enumerate(para_notes.items(), 1):
     if note_id != 1:
       sys.stdout.write('\\setlength{\\parskip}{0.25em}\n\n')
-    render_note(key, content, citation_db, append_short_form)
+    render_note(key, content, citation_db, custom_bibliography_path, append_short_form)
     sys.stdout.write('.')
     if note_id != num_notes:
       # sys.stdout.write('\n\n\\vspace{-20pt}\n\n')
@@ -196,11 +217,18 @@ def print_paragraph_notes(para_notes, citation_db, append_short_form):
     sys.stdout.write('\\setlength{\\parskip}{\\originalparskip}\n\n')
 
 @functools.lru_cache(maxsize=None)
-def get_short_form(citation_key, bibliography_path, csl_path):
+def get_short_form(citation_key, csl_bibliography_path, csl_path, custom_bibliography_path=None):
+  # First, check for the citation key in the custom_bibliography_path.
+  if custom_bibliography_path:
+    custom_bib = load_bibliography_yaml(custom_bibliography_path)
+    references = custom_bib['references']
+    item = [item for item in references if item['id'] == citation_key.strip('@')]
+    if item:
+      return item[0]['title-short']
   temp_path = 'temp.md'
   with open(temp_path, 'w') as temp_file:
     temp_file.write('[{}]\n\n[{}]\n'.format(citation_key, citation_key))
-  pandoc_command = 'pandoc temp.md --bibliography {} --csl {} -t plain'.format(bibliography_path, csl_path)
+  pandoc_command = 'pandoc temp.md --bibliography {} --csl {} -t plain'.format(csl_bibliography_path, csl_path)
   pandoc_output = subprocess.check_output(shlex.split(pandoc_command)).decode('utf-8')
   try:
     os.remove(temp_path)
@@ -211,11 +239,19 @@ def get_short_form(citation_key, bibliography_path, csl_path):
   return short_form
 
 @functools.lru_cache(maxsize=None)
-def get_long_form(citation_key, bibliography_path, csl_path):
+def get_long_form(citation_key, csl_bibliography_path, csl_path, custom_bibliography_path=None):
+  # First, check for the citation key in the custom_bibliography_path.
+  if custom_bibliography_path:
+    custom_bib = load_bibliography_yaml(custom_bibliography_path)
+    references = custom_bib['references']
+    item = [item for item in references if item['id'] == citation_key.strip('@')]
+
+    if item:
+      return item[0]['custom_format'].replace('<pinpoint>', '')
   temp_path = 'temp.md'
   with open(temp_path, 'w') as temp_file:
     temp_file.write('[{}]\n\n[{}]\n'.format(citation_key, citation_key))
-  pandoc_command = 'pandoc temp.md --bibliography {} --csl {} -t plain'.format(bibliography_path, csl_path)
+  pandoc_command = 'pandoc temp.md --bibliography {} --csl {} -t plain'.format(csl_bibliography_path, csl_path)
   pandoc_output = subprocess.check_output(shlex.split(pandoc_command)).decode('utf-8')
   try:
     os.remove(temp_path)
@@ -293,7 +329,7 @@ def bracket_lists(raw_source):
   # Looking for newline, whitespace, then roman numeral then two spaces.
   pass
 
-def run_filter(input_path, bibliography_path, csl_path):
+def run_filter(input_path, csl_bibliography_path, csl_path, custom_bibliography_path):
   citation_db = {}
 
   append_short_form = detect_duplicate_citations(input_path)
@@ -317,7 +353,7 @@ def run_filter(input_path, bibliography_path, csl_path):
     if char in paragraph_markers or char == '#':
       # Whenever we encounter a new paragraph or heading level, dump
       # any paragraph-level notes from the previous paragraph.
-      print_paragraph_notes(para_notes, citation_db, append_short_form)
+      print_paragraph_notes(para_notes, citation_db, custom_bibliography_path, append_short_form)
       # Resetting the paragraph notes for the forthcoming paragraph.
       para_notes = {}
       if char in paragraph_markers:
@@ -360,7 +396,7 @@ def run_filter(input_path, bibliography_path, csl_path):
         # before the next paragraph.
         citation_db[citation_key] = {}
         citation_db[citation_key]['original_paragraph'] = para_number
-        short_form = get_short_form(citation_key, bibliography_path, csl_path)
+        short_form = get_short_form(citation_key, csl_bibliography_path, csl_path, custom_bibliography_path)
         citation_db[citation_key]['short_form'] = short_form
         if not explicit_paragraph_note:
           sys.stdout.write('({})'.format(short_form))
@@ -413,14 +449,14 @@ def run_filter(input_path, bibliography_path, csl_path):
         # before the next paragraph.
         citation_db[citation_key] = {}
         citation_db[citation_key]['original_paragraph'] = para_number
-        short_form = get_short_form(citation_key, bibliography_path, csl_path)
+        short_form = get_short_form(citation_key, csl_bibliography_path, csl_path, custom_bibliography_path)
         citation_db[citation_key]['short_form'] = short_form
-        render_note(citation_key, inline_note[citation_key], citation_db, append_short_form)
+        render_note(citation_key, inline_note[citation_key], citation_db, custom_bibliography_path, append_short_form)
       else:
         # This citation key has been mentioned before.
         original_paragraph = citation_db[citation_key]['original_paragraph']
         inline_note[citation_key]['supra'] = True
-        render_note(citation_key, inline_note[citation_key], citation_db, append_short_form)
+        render_note(citation_key, inline_note[citation_key], citation_db, custom_bibliography_path, append_short_form)
       in_a_citation = False
       possibly_in_a_citation = False
       in_an_inline_citation = False
@@ -428,17 +464,22 @@ def run_filter(input_path, bibliography_path, csl_path):
     else:
       sys.stdout.write(char)
 
-  print_paragraph_notes(para_notes, citation_db, append_short_form)
+  print_paragraph_notes(para_notes, citation_db, custom_bibliography_path, append_short_form)
 
 @functools.lru_cache(maxsize=None)
-def load_bibliography_yaml(bibliography_path):
-  y = yaml.load(open(bibliography_path, 'r').read())
+def load_bibliography_yaml(csl_bibliography_path):
+  y = yaml.load(open(csl_bibliography_path, 'r').read())
   return y
 
-def get_sort_key(ref_key, bibliography_path):
-  # TODO: Make this work for manually rendered citations (those that
-  # don't go through CSL).
-  references = load_bibliography_yaml(bibliography_path)['references']
+def get_sort_key(ref_key, csl_bibliography_path, custom_bibliography_path):
+  if custom_bibliography_path:
+    custom_bib = load_bibliography_yaml(custom_bibliography_path)
+    references = custom_bib['references']
+    item = [item for item in references if item['id'] == ref_key.strip('@')]
+    if item:
+      return item[0]['custom_format'].replace('_', '')
+
+  references = load_bibliography_yaml(csl_bibliography_path)['references']
   item = [item for item in references if item['id'] == ref_key.strip('@')]
   item = item[0]
   if item['type'] == 'legal_case':
@@ -448,12 +489,12 @@ def get_sort_key(ref_key, bibliography_path):
   else:
     return item['title']
 
-def add_table_of_authorities(bibliography_path, csl_path):
+def add_table_of_authorities(csl_bibliography_path, csl_path, custom_bibliography_path):
   sys.stdout.write('\n\n\\newpage\n\n\\pagenumbering{gobble}\n\\begin{center}\\underline{\\textsc{Table of Authorities}}\\end{center}\n\n')
   sys.stdout.write('\\hfill\\textsc{Pages}\n\n\\raggedright\n\n')
   sys.stdout.write('\\setlength{\\parskip}{0.25em}\n\n')
-  for key, count in sorted(ref_counts.items(), key=lambda rec: get_sort_key(rec[0], bibliography_path)):
-    long_form = get_long_form(key, bibliography_path, csl_path)
+  for key, count in sorted(ref_counts.items(), key=lambda rec: get_sort_key(rec[0], csl_bibliography_path, custom_bibliography_path)):
+    long_form = get_long_form(key, csl_bibliography_path, csl_path, custom_bibliography_path)
     long_form = re.sub(r'_(.*?)_', r'\\textit{\1}', long_form)
     sys.stdout.write('\\onehalfspacing {} \\mydotfill '.format(long_form))
     sys.stdout.write('\\pagelist{{ref:{}}}{{{}}}\n\n'.format(key, count))
@@ -464,18 +505,20 @@ def add_signature_block():
 if (__name__ == '__main__'):
   try:
     input_path = sys.argv[1]
-    bibliography_path = sys.argv[2]
+    csl_bibliography_path = sys.argv[2]
     csl_path = sys.argv[3]
+    custom_bibliography_path = sys.argv[4]
   except:
     print(usage)
     exit(1)
 
   if (not input_path.endswith('.md') or not os.path.isfile(input_path) or
       not csl_path.endswith('.csl') or not os.path.isfile(csl_path) or
-      not bibliography_path.endswith('.yaml') or not os.path.isfile(bibliography_path)):
+      not csl_bibliography_path.endswith('.yaml') or not os.path.isfile(csl_bibliography_path) or
+      not os.path.isfile(custom_bibliography_path)):
     print(usage)
     sys.exit(1)
 
-  run_filter(input_path, bibliography_path, csl_path)
+  run_filter(input_path, csl_bibliography_path, csl_path, custom_bibliography_path)
   add_signature_block()
-  add_table_of_authorities(bibliography_path, csl_path)
+  add_table_of_authorities(csl_bibliography_path, csl_path, custom_bibliography_path)

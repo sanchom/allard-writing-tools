@@ -344,7 +344,7 @@ $endif$
 
 \hfill RESPONDENT
 
-\vspace{6mm}
+\vspace{20mm}
 \hrule
 \centering\large \textbf{$if(respondent)$RESPONDENT$endif$$if(appellant)$APPELLANT$endif$'S FACTUM}
 \vspace{4mm}
@@ -361,7 +361,7 @@ $endfor$
 
 \vspace{1cm}
 
-Counsel for the Appellant
+\small{Counsel for the Appellant}
 \end{minipage}
 \hfill
 \begin{minipage}{2.0in}
@@ -374,7 +374,7 @@ $endfor$
 
 \vspace{1cm}
 
-Counsel for the Respondent
+\small{Counsel for the Respondent}
 \end{minipage}
 
 \end{titlepage}

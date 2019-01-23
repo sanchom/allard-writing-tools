@@ -235,7 +235,7 @@ def get_short_form(citation_key, csl_bibliography_path, csl_path, custom_bibliog
   except:
     pass
   forms = pandoc_output.splitlines()
-  short_form = forms[-1]
+  short_form = forms[-1].replace('_', '*')
   return short_form
 
 @functools.lru_cache(maxsize=None)
@@ -258,7 +258,7 @@ def get_long_form(citation_key, csl_bibliography_path, csl_path, custom_bibliogr
   except:
     pass
   forms = pandoc_output.split('\n\n')
-  long_form = forms[0].replace('\n', ' ')
+  long_form = forms[0].replace('\n', ' ').replace('_', '*')
   return long_form
 
 def detect_duplicate_citations(input_path):
@@ -489,15 +489,59 @@ def get_sort_key(ref_key, csl_bibliography_path, custom_bibliography_path):
   else:
     return item['title']
 
+def there_are_cases_to_list(csl_bibliography_path, custom_bibliography_path):
+  for (key, count) in ref_counts.items():
+    if is_case(key, csl_bibliography_path, custom_bibliography_path):
+      return True
+  return False
+
+def there_is_legislation_to_list(csl_bibliography_path, custom_bibliography_path):
+  for (key, count) in ref_counts.items():
+    if is_legislation(key, csl_bibliography_path, custom_bibliography_path):
+      return True
+  return False
+
+def is_case(key, csl_bibliography_path, custom_bibliography_path):
+  # TODO: Also check custom_bibliography_path
+  references = load_bibliography_yaml(csl_bibliography_path)['references']
+  item = [item for item in references if item['id'] == key.strip('@')]
+  if item and item[0]['type'] == 'legal_case':
+    return True
+  return False
+
+def is_legislation(key, csl_bibliography_path, custom_bibliography_path):
+  # TODO: Also check custom_bibliography_path
+  references = load_bibliography_yaml(csl_bibliography_path)['references']
+  item = [item for item in references if item['id'] == key.strip('@')]
+  if item and item[0]['type'] == 'legislation':
+    return True
+  return False
+
 def add_table_of_authorities(csl_bibliography_path, csl_path, custom_bibliography_path):
   sys.stdout.write('\n\n\\newpage\n\n\\pagenumbering{gobble}\n\\begin{center}\\underline{\\textsc{Table of Authorities}}\\end{center}\n\n')
-  sys.stdout.write('\\hfill\\textsc{Pages}\n\n\\raggedright\n\n')
   sys.stdout.write('\\setlength{\\parskip}{0.25em}\n\n')
-  for key, count in sorted(ref_counts.items(), key=lambda rec: get_sort_key(rec[0], csl_bibliography_path, custom_bibliography_path)):
-    long_form = get_long_form(key, csl_bibliography_path, csl_path, custom_bibliography_path)
-    long_form = re.sub(r'_(.*?)_', r'\\textit{\1}', long_form)
-    sys.stdout.write('\\onehalfspacing {} \\mydotfill '.format(long_form))
-    sys.stdout.write('\\pagelist{{ref:{}}}{{{}}}\n\n'.format(key, count))
+
+  if there_are_cases_to_list(csl_bibliography_path, custom_bibliography_path):
+    sys.stdout.write('\\underline{\\textsc{Cases}}\\hfill\\underline{\\textsc{Pages}}\n\n\\raggedright\n\n')
+    for key, count in sorted(ref_counts.items(), key=lambda rec: get_sort_key(rec[0], csl_bibliography_path, custom_bibliography_path)):
+      if is_case(key, csl_bibliography_path, custom_bibliography_path):
+        long_form = get_long_form(key, csl_bibliography_path, csl_path, custom_bibliography_path)
+        long_form = long_form.replace('&', '\&')
+        long_form = re.sub(r'\*(.*?)\*', r'\\textit{\1}', long_form)
+        sys.stdout.write('\\onehalfspacing {} \\mydotfill '.format(long_form))
+        sys.stdout.write('\\pagelist{{ref:{}}}{{{}}}\n\n'.format(key, count))
+
+  if there_is_legislation_to_list(csl_bibliography_path, custom_bibliography_path):
+    sys.stdout.write('\\vspace{1.5em}\n\n')
+    sys.stdout.write('\\underline{\\textsc{Statutes}}\\hfill\\underline{\\textsc{Pages}}\n\n\\raggedright\n\n')
+    for key, count in sorted(ref_counts.items(), key=lambda rec: get_sort_key(rec[0], csl_bibliography_path, custom_bibliography_path)):
+      if is_legislation(key, csl_bibliography_path, custom_bibliography_path):
+        long_form = get_long_form(key, csl_bibliography_path, csl_path, custom_bibliography_path)
+        long_form = long_form.replace('&', '\&')
+        long_form = re.sub(r'\*(.*?)\*', r'\\textit{\1}', long_form)
+        sys.stdout.write('\\onehalfspacing {} \\mydotfill '.format(long_form))
+        sys.stdout.write('\\pagelist{{ref:{}}}{{{}}}\n\n'.format(key, count))
+
 
 def add_signature_block():
   sys.stdout.write('\n\\addsignatureblock\n\n')

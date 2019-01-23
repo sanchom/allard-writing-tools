@@ -182,12 +182,12 @@ $if(strikeout)$
 $endif$
 $if(indent)$
 $else$
-\IfFileExists{parskip.sty}{%
-\usepackage{parskip}
-}{% else
+% \IfFileExists{parskip.sty}{%
+% \usepackage{parskip}
+% }{% else
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{6pt plus 2pt minus 1pt}
-}
+\setlength{\parskip}{2pt plus 2pt minus 1pt}
+% }
 $endif$
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
 \providecommand{\tightlist}{%
@@ -346,6 +346,7 @@ $endif$
 
 \vspace{20mm}
 \hrule
+\vspace{4mm}
 \centering\large \textbf{$if(respondent)$RESPONDENT$endif$$if(appellant)$APPELLANT$endif$'S FACTUM}
 \vspace{4mm}
 \hrule

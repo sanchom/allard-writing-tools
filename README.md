@@ -1,3 +1,6 @@
+I didn't like how this project turned out. I'm trying again with a new
+project [here](https://github.com/sanchom/associate).
+
 # Example
 ### Source
 
